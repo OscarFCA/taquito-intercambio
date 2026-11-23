@@ -349,33 +349,22 @@
     var rayos = D.createElement('div'); rayos.className = 'fx-rayos fx-rays'; cupon.insertBefore(rayos, cupon.firstChild);
     gsap.to(rayos, { rotation: 360, duration: 50, repeat: -1, ease: 'none' });
     gsap.to(g('.sun', cupon), { scale: 1.08, duration: 2.4, yoyo: true, repeat: -1, ease: 'sine.inOut' });
-    var pct = g('.pct', cupon), num = null;
-    if (pct && pct.firstChild && pct.firstChild.nodeType === 3) {
-      num = D.createElement('span'); num.textContent = '10';
-      pct.replaceChild(num, pct.firstChild); pct.insertBefore(D.createTextNode('%'), num.nextSibling);
-    }
-    var codigo = g('.codigo', cupon);
+    var opciones = g('.pr-opc', cupon);
     gsap.timeline({ scrollTrigger: { trigger: cupon, start: 'top 78%', once: true } })
       .from(cupon, { y: 80, scale: .92, opacity: 0, duration: .9, ease: 'power3.out', clearProps: 'transform,opacity' })
-      .from(codigo, {
-        scale: 1.9, rotation: -10, opacity: 0, duration: .45, ease: 'power4.in',
+      .from(ga('.pr-card', cupon), {
+        scale: 1.6, rotation: function (i) { return i ? 8 : -8; }, opacity: 0, duration: .45, stagger: .15, ease: 'power4.in', clearProps: 'transform,opacity',
         onComplete: function () {
           gsap.fromTo(cupon, { x: 0 }, { x: 5, duration: .05, yoyo: true, repeat: 5, clearProps: 'transform' });
-          var c = centro(codigo); rafaga(c[0], c[1], { n: 60, vel: 9, chispa: .4 });
+          if (opciones) { var c = centro(opciones); rafaga(c[0], c[1], { n: 60, vel: 9, chispa: .4 }); }
         }
       }, '-=.2')
-      .from(ga('li', cupon), { opacity: 0, x: -20, stagger: .08, duration: .5, clearProps: 'transform,opacity' }, '-=.1');
-    /* contador: arranca en 0 y sube al 10 */
-    if (num) {
-      var cuenta = { v: 0 };
-      ScrollTrigger.create({
-        trigger: cupon, start: 'top 78%', once: true, onEnter: function () {
-          num.textContent = '0';
-          gsap.to(cuenta, { v: 10, duration: 1.4, delay: .5, ease: 'power2.out', onUpdate: function () { num.textContent = Math.round(cuenta.v); } });
-        }
-      });
-    }
+      .from(ga('.pr-pasos li, .pr-form, .pr-cond li', cupon), { opacity: 0, x: -20, stagger: .06, duration: .5, clearProps: 'transform,opacity' }, '-=.1');
+    ga('.pr-card', cupon).forEach(function (l) {
+      l.addEventListener('change', function () { var c = centro(l); rafaga(c[0], c[1], { n: 26, vel: 5, chispa: .6, arriba: 2 }); gsap.fromTo(l, { scale: .94 }, { scale: 1, duration: .5, ease: 'back.out(3)', clearProps: 'transform' }); });
+    });
   }
+  W.fxRafaga = function (el) { var c = centro(el); rafaga(c[0], c[1], { n: 90, vel: 11, chispa: .4, arriba: 4 }); };
   g('#copy') && g('#copy').addEventListener('click', function (e) { var c = centro(e.currentTarget); rafaga(c[0], c[1], { n: 50, vel: 8 }); });
 
   /* Reserva: las opciones caen como tarjetas */
@@ -396,7 +385,7 @@
   });
 
   /* Capítulos a la derecha (pantallas grandes) */
-  var caps = [[hero, 'Tu postal'], [historia, 'La historia'], [g('#crea'), 'Crea tu postal'], [g('#descuento'), 'Tu 10%'], [g('#reserva'), 'Reserva'], [g('.coleccion'), 'La colección']]
+  var caps = [[hero, 'Tu postal'], [historia, 'La historia'], [g('#crea'), 'Crea tu postal'], [g('#descuento'), 'Tu premio'], [g('#reserva'), 'Reserva'], [g('.coleccion'), 'La colección']]
     .filter(function (c) { return c[0]; });
   var puntos = D.createElement('nav'); puntos.className = 'fx-dots'; puntos.setAttribute('aria-label', 'Capítulos');
   caps.forEach(function (c, i) {

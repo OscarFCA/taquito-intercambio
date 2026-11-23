@@ -124,7 +124,8 @@ footer img{height:44px}
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--verde);color:var(--crema);padding:10px 18px;border-radius:999px;font-weight:600;font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none}
 .toast.on{opacity:1}
 </style>
-<link rel="stylesheet" href="fx.css?v=1">
+<link rel="stylesheet" href="fx.css?v=2">
+<link rel="stylesheet" href="promo.css?v=1">
 <script>if(!matchMedia("(prefers-reduced-motion: reduce)").matches){document.documentElement.className+=" fx-pre";setTimeout(function(){document.documentElement.classList.remove("fx-pre")},3000)}</script>
 </head>
 <body>
@@ -137,7 +138,7 @@ footer img{height:44px}
 
 <header>
   <img src="img/logo-crema.png" alt="El Taquito">
-  <nav><a href="#historia">La historia</a><a href="#crea">Crea tu postal</a><a href="#descuento">Tu 10%</a><a href="#reserva">Reserva</a></nav>
+  <nav><a href="#historia">La historia</a><a href="#crea">Crea tu postal</a><a href="#descuento">Tu premio</a><a href="#reserva">Reserva</a></nav>
 </header>
 
 <section class="hero">
@@ -150,7 +151,7 @@ footer img{height:44px}
       <div class="steps">
         <a href="#historia"><span class="n">1</span>Descubre la historia de tu postal</a>
         <a href="#crea"><span class="n">2</span>Crea tu propia postal con tu foto</a>
-        <a href="#descuento"><span class="n">3</span>Obtén 10% en tu próxima visita</a>
+        <a href="#descuento"><span class="n">3</span>Comparte y gana 2×1 o 10%</a>
         <a href="#reserva"><span class="n">4</span>Reserva tu mesa o tu evento</a>
       </div>
     </div>
@@ -190,8 +191,9 @@ footer img{height:44px}
         <label for="de">CON CARIÑO</label><input type="text" id="de" placeholder="Tu nombre" maxlength="28">
         <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:18px">
           <button class="btn btn-rojo" id="make">Crear mi postal</button>
-          <a class="btn btn-borde" id="shareWa" href="#" target="_blank" rel="noopener">Enviar por WhatsApp</a>
+          <button class="btn btn-borde" id="enviarPostal" type="button">Enviar mi postal</button>
         </div>
+        <div class="envio" id="envio" hidden></div>
         <p class="nota">Versión de ejemplo: aquí la postal se arma con tu foto en el estilo de la colección. En la versión final, la IA convierte tu foto al estilo de las portadas.</p>
       </div>
       <div>
@@ -204,22 +206,7 @@ footer img{height:44px}
 
 <section id="descuento" style="padding-top:0">
   <div class="wrap">
-    <div class="cupon">
-      <div class="sun"></div>
-      <div class="pct">10%<small>DE DESCUENTO</small></div>
-      <div style="position:relative">
-        <div class="eyebrow" style="color:var(--crema);opacity:.8">Paso 3 · Por traer tu postal</div>
-        <h2>Tu próxima comida tiene premio</h2>
-        <div class="codigo"><span id="code">POSTAL06</span><button id="copy">Copiar</button></div>
-        <ul>
-          <li>Muestra este código o tu postal al pedir la cuenta.</li>
-          <li>Válido en consumo de alimentos, una vez por mesa.</li>
-          <li>No acumulable con otras promociones.</li>
-          <li>Vigencia de ejemplo: del 12 de diciembre de 2026 al 28 de febrero de 2027.</li>
-        </ul>
-        <p class="nota" style="color:var(--crema);opacity:.7">Condiciones de ejemplo, por confirmar con El Taquito.</p>
-      </div>
-    </div>
+    <div class="cupon"><div class="sun"></div><div id="promoApp"></div></div>
   </div>
 </section>
 
@@ -327,7 +314,7 @@ function show(n){
   $('frente').src='img/frente-'+n+'.jpg'; $('foto').src='img/foto-'+n+'.jpg'; if(typeof loadViva==='function') loadViva(n);
   $('hTitle').textContent=p.t; $('story').textContent=p.s; $('curioso').textContent=p.d;
   $('dato').textContent='POSTAL N.º '+n+' · '+p.y.toUpperCase(); $('figcap').textContent='Archivo El Taquito · '+p.y;
-  $('code').textContent='POSTAL'+n; pick.value=n;
+  pick.value=n;
   rail.querySelectorAll('a').forEach(a=>a.classList.toggle('on',a.dataset.n===n));
   renderDrops();
   $('waMesa').href=wa('Hola, recibí la postal N.º '+n+' (código POSTAL'+n+'). Quiero reservar mesa para __ personas el día __ a las __.');
@@ -344,9 +331,7 @@ pick.addEventListener('change',()=>{location.hash='p'+pick.value});
 $('simdate').addEventListener('change',()=>renderDrops());
 rail.addEventListener('click',e=>{const a=e.target.closest('a');if(a){e.preventDefault();location.hash='p'+a.dataset.n;window.scrollTo({top:0,behavior:'smooth'})}});
 
-$('copy').addEventListener('click',async()=>{
-  try{await navigator.clipboard.writeText($('code').textContent);toast('Código copiado')}catch(e){toast('Tu código: '+$('code').textContent)}
-});
+
 function toast(t){const el=$('toast');el.textContent=t;el.classList.add('on');setTimeout(()=>el.classList.remove('on'),1800)}
 
 
@@ -386,7 +371,7 @@ function load(f){
 function updShare(){
   const para=$('para').value.trim(), de=$('de').value.trim();
   const msg=(para?para+', ':'')+'te mando una postal de El Taquito. Desde 1917, las mejores historias se comparten alrededor de una mesa. ¿Vamos juntos? Con mi código POSTAL'+cur+' tenemos 10%.'+(de?' Con cariño, '+de+'.':'');
-  $('shareWa').href='https://wa.me/?text='+encodeURIComponent(msg);
+  if($('shareWa')) $('shareWa').href='https://wa.me/?text='+encodeURIComponent(msg);
 }
 $('make').addEventListener('click',()=>{ if(!userImg){file.click();return} make() });
 
@@ -441,6 +426,7 @@ function make(){
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.20/dist/lenis.min.js"></script>
-<script src="fx.js?v=1"></script>
+<script src="promo.js?v=1"></script>
+<script src="fx.js?v=2"></script>
 </body>
 </html>
