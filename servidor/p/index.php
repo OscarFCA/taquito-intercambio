@@ -66,7 +66,7 @@ cabeza($titulo, $og);
   <div class="otra">
     <div class="regalito" aria-hidden="true">🎁</div>
     <div class="eyebrow">Ahora te toca a ti</div>
-    <h2>Crea tu postal personalizada y descubre la sorpresa que te preparamos</h2>
+    <h2>Crea tu postal personalizada y descubre una sorpresa</h2>
     <p class="lead">Con tu foto, para alguien especial. Toma menos de un minuto.</p>
     <a class="btn btn-rojo" href="/postal/?origen=<?= $c ?>#crea">Crear mi postal</a>
   </div>
