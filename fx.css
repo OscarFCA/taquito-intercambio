@@ -1,0 +1,136 @@
+/* =========================================================
+   EXPERIENCIA · capa de animación de Intercambio con Sabor
+   Todo cuelga de html.fx (lo pone fx.js). Si fx.js no carga,
+   la página se ve completa y sin animaciones.
+   ========================================================= */
+
+section[id]{scroll-margin-top:72px}
+/* Lo que entra desde los lados no debe ensanchar la página en el celular */
+html.fx,html.fx body{overflow-x:clip}
+html.lenis,html.lenis body{height:auto}
+.lenis.lenis-smooth{scroll-behavior:auto!important}
+.lenis.lenis-stopped{overflow:hidden}
+
+/* Mientras arranca fx.js, el hero espera escondido (máx. 3 s) */
+.fx-pre .hero .wrap{opacity:0}
+
+/* ---------- Barra de progreso ---------- */
+.fx-prog{position:fixed;left:0;top:0;height:3px;width:100%;z-index:30;pointer-events:none;
+ background:linear-gradient(90deg,var(--rojo),#E7A33E,var(--rojo));transform-origin:0 50%;transform:scaleX(0)}
+
+/* ---------- Lienzos de partículas ---------- */
+.fx-canvas{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:70}
+.fx-motes{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
+
+/* ---------- Papel picado ---------- */
+html.fx .hero{position:relative;padding-top:112px;overflow:hidden}
+html.fx .hero .wrap{position:relative;z-index:1}
+.fx-picado{position:absolute;left:-10px;right:-10px;top:0;height:96px;z-index:2;pointer-events:none}
+.fx-picado:before{content:"";position:absolute;left:0;right:0;top:9px;height:2px;background:rgba(43,42,38,.45)}
+.fx-flag{position:absolute;top:9px;width:54px;transform-origin:50% 0;
+ transform:rotate(calc(var(--wind,0) * 1deg)) skewX(calc(var(--wind,0) * -.4deg))}
+.fx-flag i{display:block;transform-origin:50% 0;animation:fxSway var(--d,3s) ease-in-out var(--dl,0s) infinite alternate}
+.fx-flag svg{display:block;width:100%;height:auto;filter:drop-shadow(0 3px 2px rgba(40,28,10,.18))}
+@keyframes fxSway{from{transform:rotate(-5deg)}to{transform:rotate(5deg)}}
+@media(max-width:720px){html.fx .hero{padding-top:92px}.fx-flag{width:42px}.fx-picado{height:80px}}
+
+/* ---------- Postal del hero ---------- */
+.fx-pcol{position:relative;perspective:1100px}
+html.fx .hero .postal{touch-action:pan-y;cursor:grab;user-select:none;-webkit-user-select:none;will-change:transform}
+html.fx .hero .postal:active{cursor:grabbing}
+html.fx .hero .postal img{pointer-events:none;-webkit-user-drag:none}
+.fx-glare{position:absolute;inset:0;pointer-events:none;mix-blend-mode:soft-light;opacity:0;transition:opacity .4s;
+ background:radial-gradient(circle at var(--gx,30%) var(--gy,20%),rgba(255,255,255,.85),rgba(255,255,255,0) 55%)}
+.hero .postal:hover .fx-glare{opacity:1}
+.fx-sheen{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.fx-sheen:after{content:"";position:absolute;top:-20%;bottom:-20%;width:38%;left:-60%;
+ background:linear-gradient(100deg,transparent,rgba(255,250,230,.55),transparent);transform:skewX(-18deg)}
+.fx-sheen.go:after{animation:fxSheen 1.4s ease-out}
+@keyframes fxSheen{to{left:130%}}
+.fx-sello{position:absolute;left:-26px;top:-30px;width:112px;height:112px;border-radius:50%;
+ border:3px solid var(--rojo);display:grid;place-items:center;text-align:center;color:var(--rojo);
+ font:700 11px/1.15 Montserrat;letter-spacing:.14em;transform:rotate(-14deg);background:rgba(243,235,211,.82);
+ box-shadow:inset 0 0 0 4px rgba(243,235,211,.82),inset 0 0 0 6px var(--rojo);pointer-events:none}
+.fx-sello b{display:block;font:700 30px/1 Oswald;letter-spacing:.02em;margin:3px 0}
+@media(max-width:720px){.fx-sello{width:80px;height:80px;font-size:8.5px;left:-10px;top:-22px}.fx-sello b{font-size:23px}}
+
+.fx-nav{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:34px}
+.fx-nav button{width:48px;height:48px;border-radius:50%;border:2px solid var(--verde);background:#fffaf0;color:var(--verde);
+ font:700 22px/1 Oswald;cursor:pointer;display:grid;place-items:center;transition:transform .2s,background .2s,color .2s}
+.fx-nav button:hover{background:var(--verde);color:var(--crema);transform:scale(1.08)}
+.fx-count{text-align:center;font:600 13px Montserrat;color:var(--verde);min-width:150px}
+.fx-count b{font:700 26px Oswald;color:var(--rojo)}
+.fx-count span{display:block;font:italic 13px Lora;color:#6b624b;margin-top:2px}
+
+/* ---------- Texto que se revela ---------- */
+.fx-m{display:inline-block;overflow:hidden;vertical-align:top;padding-bottom:.1em;margin-bottom:-.1em}
+.fx-wi{display:inline-block;will-change:transform}
+.fx-w{transition:none}
+
+/* ---------- Historia ---------- */
+html.fx .historia{position:relative;overflow:hidden}
+html.fx .historia .wrap{position:relative;z-index:1}
+.fx-year{position:absolute;right:-2vw;top:50%;z-index:0;pointer-events:none;white-space:nowrap;
+ font:700 clamp(140px,26vw,360px)/1 Oswald;color:transparent;-webkit-text-stroke:2px rgba(234,221,182,.16)}
+.fx-flash{position:absolute;inset:0;background:#fffbea;opacity:0;pointer-events:none}
+html.fx .foto{transform-origin:50% 60%}
+
+/* ---------- Colección ---------- */
+html.fx .tile:not(.locked){transition:transform .25s,box-shadow .25s}
+html.fx .tile:not(.locked):hover{transform:translateY(-6px) rotate(-2deg) scale(1.04);box-shadow:0 14px 26px rgba(0,0,0,.28);z-index:2}
+
+/* ---------- Cupón ---------- */
+.fx-rays{position:absolute;right:-250px;top:-250px;width:580px;height:580px;border-radius:50%;pointer-events:none;opacity:.22;
+ background:repeating-conic-gradient(from 0deg,var(--rojo) 0 6deg,transparent 6deg 18deg);
+ -webkit-mask:radial-gradient(circle,#000 30%,transparent 70%);mask:radial-gradient(circle,#000 30%,transparent 70%)}
+html.fx .cupon .sun{z-index:0}
+
+/* ---------- Capítulos (escritorio) ---------- */
+.fx-dots{position:fixed;right:22px;top:50%;transform:translateY(-50%);z-index:25;display:flex;flex-direction:column;gap:14px}
+.fx-dots a{position:relative;display:block;width:12px;height:12px;border-radius:50%;border:2px solid var(--verde);background:var(--papel);
+ transition:transform .3s,background .3s}
+.fx-dots a.on{background:var(--rojo);border-color:var(--rojo);transform:scale(1.35)}
+.fx-dots a span{position:absolute;right:22px;top:50%;transform:translate(8px,-50%);white-space:nowrap;opacity:0;pointer-events:none;
+ background:var(--verde);color:var(--crema);font:700 11px Montserrat;letter-spacing:.12em;padding:5px 10px;border-radius:999px;transition:.25s}
+.fx-dots a:hover span{opacity:1;transform:translate(0,-50%)}
+.fx-dots.dark a{border-color:var(--crema);background:transparent}
+.fx-dots.dark a.on{background:var(--rojo);border-color:var(--crema)}
+@media(max-width:1100px){.fx-dots{display:none}}
+
+/* ---------- Música: aro que invita ---------- */
+.musica.fx-ring:after{content:"";position:absolute;inset:-6px;border-radius:999px;border:2px solid var(--rojo);animation:fxRing 1.8s ease-out infinite}
+@keyframes fxRing{from{opacity:.8;transform:scale(1)}to{opacity:0;transform:scale(1.25)}}
+
+/* ---------- Apertura: te llegó una postal ---------- */
+.fx-intro{position:fixed;inset:0;z-index:60;display:grid;place-items:center;overflow:hidden;cursor:pointer}
+.fx-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 40%,#46604a 0%,var(--verde) 45%,#1d2a20 100%)}
+.fx-bg:before{content:"";position:absolute;inset:0;opacity:.18;
+ background-image:radial-gradient(rgba(234,221,182,.6) 1px,transparent 1px);background-size:6px 6px}
+.fx-sello span{display:block;font-size:10px;letter-spacing:.16em}
+.fx-intro-in{position:relative;display:flex;flex-direction:column;align-items:center;gap:26px;padding:20px;width:100%}
+.fx-intro .ey{font:700 12.5px Montserrat;letter-spacing:.32em;color:var(--crema);opacity:.85;text-transform:uppercase;text-align:center}
+.fx-intro .ti{font:700 clamp(30px,6vw,56px)/1.02 Oswald;text-transform:uppercase;color:var(--crema);text-align:center;max-width:14ch}
+.fx-stage{perspective:1400px;width:min(86vw,540px)}
+.fx-card{position:relative;width:100%;aspect-ratio:3/2;transform-style:preserve-3d}
+.fx-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border:10px solid #fff;background:#fff;
+ box-shadow:0 30px 60px rgba(0,0,0,.45)}
+.fx-face img{width:100%;height:100%;object-fit:cover}
+.fx-front{transform:rotateY(180deg)}
+.fx-back{background:var(--papel);display:grid;grid-template-columns:1.1fr 1px .9fr;gap:16px;padding:18px;color:var(--tinta);
+ background-image:radial-gradient(rgba(120,95,50,.09) 1px,transparent 1px);background-size:5px 5px}
+.fx-back .l b{display:block;font:700 clamp(16px,3.2vw,24px)/1.05 Oswald;text-transform:uppercase;color:var(--verde)}
+.fx-back .l p{font:italic clamp(13px,2.4vw,17px)/1.4 Lora;margin-top:10px}
+.fx-back .l small{display:block;margin-top:10px;font:700 10px Montserrat;letter-spacing:.2em;color:var(--rojo)}
+.fx-back .sep{background:rgba(43,42,38,.3)}
+.fx-back .r{position:relative;display:flex;flex-direction:column;justify-content:flex-end;gap:16px;padding-bottom:6px}
+.fx-back .tim{position:absolute;right:0;top:0;width:clamp(52px,11vw,74px);aspect-ratio:4/5;background:var(--rojo);color:var(--crema);
+ border:3px dashed var(--papel);outline:2px solid var(--rojo);display:grid;place-items:center;text-align:center;font:700 9px/1.1 Montserrat;letter-spacing:.1em}
+.fx-back .tim b{display:block;font:700 clamp(15px,3vw,20px) Oswald}
+.fx-back .mat{position:absolute;right:clamp(34px,8vw,52px);top:clamp(26px,6vw,40px);width:clamp(60px,13vw,86px);aspect-ratio:1;border-radius:50%;
+ border:2px solid rgba(43,42,38,.55);display:grid;place-items:center;font:700 8px/1.2 Montserrat;letter-spacing:.12em;color:rgba(43,42,38,.7);transform:rotate(-12deg);text-align:center}
+.fx-back .lin{border-bottom:1.5px solid rgba(43,42,38,.35);font:italic clamp(14px,2.6vw,18px) Lora;padding-bottom:3px;min-height:1.4em}
+.fx-hint{font:600 13px Montserrat;letter-spacing:.18em;color:var(--crema);text-transform:uppercase;opacity:.9;
+ animation:fxPulse 1.6s ease-in-out infinite}
+@keyframes fxPulse{50%{opacity:.35}}
+.fx-skip{position:absolute;right:18px;top:16px;background:transparent;border:1.5px solid rgba(234,221,182,.5);color:var(--crema);
+ font:600 12px Montserrat;letter-spacing:.14em;padding:8px 14px;border-radius:999px;cursor:pointer}

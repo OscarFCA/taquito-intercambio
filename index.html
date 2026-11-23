@@ -124,6 +124,8 @@ footer img{height:44px}
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--verde);color:var(--crema);padding:10px 18px;border-radius:999px;font-weight:600;font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none}
 .toast.on{opacity:1}
 </style>
+<link rel="stylesheet" href="fx.css?v=1">
+<script>if(!matchMedia("(prefers-reduced-motion: reduce)").matches){document.documentElement.className+=" fx-pre";setTimeout(function(){document.documentElement.classList.remove("fx-pre")},3000)}</script>
 </head>
 <body>
 
@@ -437,5 +439,9 @@ function make(){
   updShare();
 }
 </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.20/dist/lenis.min.js"></script>
+<script src="fx.js?v=1"></script>
 </body>
 </html>
