@@ -103,6 +103,7 @@ function responder(array $d, int $status = 200): void { http_response_code($stat
 function cabeza(string $titulo, string $extra = ''): void {
   echo '<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">';
   echo '<title>' . h($titulo) . '</title><meta name="robots" content="noindex">';
+  echo '<link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="32x32" href="/icon-32.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png">';
   echo '<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Lora:ital,wght@0,400;0,600;1,400&family=Oswald:wght@500;700&display=swap" rel="stylesheet">';
   echo $extra;
   echo '<style>' . CSS_BASE . '</style></head><body>';
