@@ -144,17 +144,20 @@
     });
   }
 
-  /* ---------- 3. Enviar mi postal por enlace (solo en la landing) ---------- */
-  var bEnviar = $('enviarPostal'), envio = $('envio');
-  if (bEnviar && envio) {
-    var enlace = null, imgSubida = '';
+  /* ---------- 3. Enviar mi postal por enlace: se prepara sola al revelarse ---------- */
+  var envio = $('envio');
+  if (envio) {
+    var enlace = null, imgSubida = '', subiendo = false;
     var pv2 = $('preview');
     if (pv2) new MutationObserver(function () { enlace = null; envio.hidden = true; }).observe(pv2, { childList: true });
-    bEnviar.addEventListener('click', function () {
+    function nombrePara() { return (($('para') || {}).value || '').trim(); }
+    W.tqEnlace = function () {
       var im = D.querySelector('#preview img');
-      if (!im) { aviso('Primero crea tu postal con tu foto'); var fl = $('file'); if (fl) fl.click(); return; }
+      if (!im || subiendo) return;
       if (enlace && imgSubida === im.src) { mostrar(enlace); return; }
-      bEnviar.disabled = true; bEnviar.textContent = 'Preparando tu enlace…';
+      subiendo = true;
+      envio.innerHTML = '<b>' + (nombrePara() ? 'Envíasela a ' + esc(nombrePara()) : 'Envía tu postal') + '</b><p class="cargando">Preparando tu enlace…</p>';
+      envio.hidden = false;
       fetch(im.src).then(function (r) { return r.blob(); }).then(function (b) {
         var fd = new FormData();
         fd.append('imagen', b, 'postal.jpg');
@@ -166,19 +169,22 @@
         if (!d.url) throw new Error(d.error || 'error');
         enlace = d.url; imgSubida = im.src; mostrar(enlace);
       }).catch(function (e) {
-        aviso(e && e.message && e.message !== 'error' && e.message.indexOf('fetch') < 0 ? e.message : 'No pudimos crear el enlace. Revisa tu conexión.');
-      }).then(function () { bEnviar.disabled = false; bEnviar.textContent = 'Enviar mi postal'; });
-    });
+        var t = e && e.message && e.message !== 'error' && e.message.indexOf('fetch') < 0 ? e.message : 'No pudimos crear el enlace. Revisa tu conexión.';
+        envio.innerHTML = '<b>No se pudo preparar el enlace</b><p class="cargando">' + esc(t) + '</p><div class="acc"><button type="button" data-a="retry">Intentar de nuevo</button></div>';
+        envio.querySelector('[data-a=retry]').onclick = W.tqEnlace;
+      }).then(function () { subiendo = false; });
+    };
+    function esc(t) { return String(t).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
     function mostrar(url) {
-      var para = (($('para') || {}).value || '').trim();
+      var para = nombrePara();
       var texto = (para ? para + ', te' : 'Te') + ' mandé una postal de El Taquito 💌 Ábrela y descárgala aquí: ' + url;
-      envio.innerHTML = '<b>Tu postal ya tiene enlace</b>' +
-        '<div class="link"><input readonly value="' + url + '" aria-label="Enlace de tu postal"></div>' +
+      envio.innerHTML = '<b>' + (para ? 'Envíasela a ' + esc(para) : 'Envía tu postal') + '</b>' +
         '<div class="acc">' +
-        (navigator.share ? '<button type="button" data-a="share">Compartir enlace</button>' : '') +
-        '<a class="wa" target="_blank" rel="noopener" href="https://wa.me/?text=' + encodeURIComponent(texto) + '">WhatsApp</a>' +
+        '<a class="wa" target="_blank" rel="noopener" href="https://wa.me/?text=' + encodeURIComponent(texto) + '">Enviar por WhatsApp</a>' +
+        (navigator.share ? '<button type="button" data-a="share">Compartir</button>' : '') +
         '<button type="button" data-a="copy">Copiar enlace</button></div>' +
-        '<small>Quien lo abra verá su postal, podrá descargarla y ganar su 2×1 o 10%.</small>';
+        '<div class="link"><input readonly value="' + url + '" aria-label="Enlace de tu postal"></div>' +
+        '<small>Le llega un enlace donde verá su postal y podrá descargarla.</small>';
       envio.hidden = false;
       envio.querySelector('[data-a=copy]').onclick = function () {
         (navigator.clipboard ? navigator.clipboard.writeText(url) : Promise.reject()).then(function () { aviso('Enlace copiado'); }, function () { envio.querySelector('input').select(); });
@@ -224,8 +230,7 @@
           setTimeout(function () { oscuro.hidden = true; oscuro.style.opacity = ''; }, 600);
           paso3.classList.remove('cz-revelando');
           if (W.fxRafaga) W.fxRafaga(im);
-          var para = ($('para').value || '').trim();
-          $('enviarPostal').textContent = para ? 'Enviar a ' + para : 'Enviar mi postal';
+          if (W.tqEnlace) W.tqEnlace();
           if (!$('prBox').hidden && W.tqPrepararHistoria) W.tqPrepararHistoria();
         }, 1500);
       }
@@ -236,10 +241,6 @@
       esperando = true;
       oscuro.hidden = false; paso3.classList.add('cz-revelando');
       ir(3);
-    });
-    $('czBajar').addEventListener('click', function () {
-      var im = D.querySelector('#preview img'); if (!im) return;
-      var a = D.createElement('a'); a.href = im.src; a.download = 'mi-postal-el-taquito.jpg'; D.body.appendChild(a); a.click(); a.remove();
     });
     /* Abrir el regalo */
     $('abrirRegalo').addEventListener('click', function () {

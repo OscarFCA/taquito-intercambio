@@ -125,7 +125,7 @@ footer img{height:44px}
 .toast.on{opacity:1}
 </style>
 <link rel="stylesheet" href="fx.css?v=3">
-<link rel="stylesheet" href="promo.css?v=3">
+<link rel="stylesheet" href="promo.css?v=4">
 <script>if(!matchMedia("(prefers-reduced-motion: reduce)").matches){document.documentElement.className+=" fx-pre";setTimeout(function(){document.documentElement.classList.remove("fx-pre")},3000)}</script>
 </head>
 <body>
@@ -220,12 +220,8 @@ footer img{height:44px}
           </div>
           <div class="cz-side">
             <h3 class="cz-h" id="czListo">¡Tu postal está lista!</h3>
-            <div class="cz-acc">
-              <button class="btn btn-verde" type="button" id="czBajar">Descargar mi postal</button>
-              <button class="btn btn-borde" id="enviarPostal" type="button">Enviar mi postal</button>
-            </div>
             <div class="envio" id="envio" hidden></div>
-            <p class="nota" id="saveHint" hidden>También puedes mantener presionada la imagen para guardarla.</p>
+            <span id="saveHint" hidden style="display:none"></span>
             <button class="cz-back" type="button" data-go="2">✎ Cambiar la dedicatoria</button>
           </div>
         </div>
@@ -458,7 +454,7 @@ function make(){
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.20/dist/lenis.min.js"></script>
-<script src="promo.js?v=3"></script>
+<script src="promo.js?v=4"></script>
 <script src="fx.js?v=3"></script>
 </body>
 </html>
