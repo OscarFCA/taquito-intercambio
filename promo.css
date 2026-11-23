@@ -136,3 +136,9 @@
 .cz-envio{margin-top:28px;border-top:2px dashed #d8cba5;padding-top:24px}
 .cz-envio .envio{margin-top:0}
 .envio .cargando-no{margin-top:6px;font:italic 15px Lora;opacity:.9}
+
+/* Envío de la postal: al final de la tarjeta de la promoción */
+.pr-box .cz-envio{position:relative;z-index:1;margin-top:28px;border-top:2px dashed rgba(234,221,182,.3);padding-top:24px}
+.pr-box .envio{background:rgba(234,221,182,.07);border:1.5px solid rgba(234,221,182,.22);padding:20px}
+.envio b .ey{display:block;font:700 11.5px Montserrat;letter-spacing:.24em;text-transform:uppercase;opacity:.75;margin-bottom:6px}
+.envio b{font-size:26px;line-height:1.05}

@@ -125,7 +125,7 @@ footer img{height:44px}
 .toast.on{opacity:1}
 </style>
 <link rel="stylesheet" href="fx.css?v=3">
-<link rel="stylesheet" href="promo.css?v=5">
+<link rel="stylesheet" href="promo.css?v=6">
 <script>if(!matchMedia("(prefers-reduced-motion: reduce)").matches){document.documentElement.className+=" fx-pre";setTimeout(function(){document.documentElement.classList.remove("fx-pre")},3000)}</script>
 </head>
 <body>
@@ -219,20 +219,21 @@ footer img{height:44px}
             <div class="cz-dark" id="czDark" hidden><span>Revelando tu postal…</span></div>
           </div>
           <div class="cz-side">
-            <h3 class="cz-h" id="czListo">¡Tu postal está lista!</h3>
-            <p class="cz-p">Y tenemos una sorpresa para ti.</p>
+            <h3 class="cz-h" id="czListo">Esta es tu postal</h3>
+            <p class="cz-p">Además, te ganaste un regalo 🎁</p>
             <button class="regalo-btn" type="button" id="abrirRegalo">
               <span class="regalo" aria-hidden="true"><i class="tapa"></i><i class="caja"></i><i class="lazo"></i></span>
-              <b>Abre tu sorpresa</b><span>Toca el regalo</span>
+              <b>Abre tu regalo</b><span>Tócalo para descubrirlo</span>
             </button>
             <span id="saveHint" hidden style="display:none"></span>
             <button class="cz-back" type="button" data-go="2">✎ Cambiar la dedicatoria</button>
           </div>
         </div>
         <div class="sorpresa" id="sorpresa">
-          <div class="pr-box" id="prBox" hidden><div class="sun"></div><div id="promoApp"></div></div>
+          <div class="pr-box" id="prBox" hidden><div class="sun"></div><div id="promoApp"></div>
+            <div class="cz-envio" id="czEnvio" hidden><div class="envio" id="envio" hidden></div></div>
+          </div>
         </div>
-        <div class="cz-envio" id="czEnvio" hidden><div class="envio" id="envio" hidden></div></div>
       </div>
 
     </div>
@@ -455,7 +456,7 @@ function make(){
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.20/dist/lenis.min.js"></script>
-<script src="promo.js?v=5"></script>
+<script src="promo.js?v=6"></script>
 <script src="fx.js?v=3"></script>
 </body>
 </html>

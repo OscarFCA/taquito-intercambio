@@ -151,7 +151,7 @@
     var pv2 = $('preview');
     if (pv2) new MutationObserver(function () { enlace = null; envio.hidden = true; }).observe(pv2, { childList: true });
     function nombrePara() { return (($('para') || {}).value || '').trim(); }
-    function titulo() { var p = nombrePara(); return p ? '¿Quieres mandársela a ' + esc(p) + '?' : '¿Quieres mandar tu postal?'; }
+    function titulo() { var p = nombrePara(); return '<span class="ey">¡Tu postal está lista!</span>' + (p ? 'Envíasela a ' + esc(p) : 'Envíasela a alguien especial'); }
     W.tqEnlace = function () {
       var im = D.querySelector('#preview img');
       if (!im || subiendo) return;
@@ -179,7 +179,7 @@
     function mostrar(url) {
       var para = nombrePara();
       var texto = (para ? para + ', te' : 'Te') + ' mandé una postal de El Taquito 💌 Ábrela y descárgala aquí: ' + url;
-      envio.innerHTML = '<b>' + titulo() + '</b><p class="cargando-no">Mándale tu postal también por mensaje.</p>' +
+      envio.innerHTML = '<b>' + titulo() + '</b>' +
         '<div class="acc">' +
         '<a class="wa" target="_blank" rel="noopener" href="https://wa.me/?text=' + encodeURIComponent(texto) + '">Enviar por WhatsApp</a>' +
         (navigator.share ? '<button type="button" data-a="share">Compartir</button>' : '') +
