@@ -264,6 +264,8 @@ const DROPS=[
  {mes:'Enero',fi:'6 ENE · DÍA DE REYES',tt:'Artistas de la casa',d:'2027-01-06',ids:['07','08','11','12','15']},
  {mes:'Febrero',fi:'2 FEB · CANDELARIA',tt:'El mes de Marilyn',d:'2027-02-02',ids:['01','02','03','04','05']}
 ];
+/* true = las 15 postales abiertas sin importar la fecha. Para volver al desbloqueo por mes, poner false. */
+const TODAS_ABIERTAS=true;
 const MESES=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
 function fecha(iso){const [y,m,d]=iso.split('-').map(Number);return d+' '+MESES[m-1]}
 function today(){const v=$('simdate')?$('simdate').value:null;return v?new Date(v+'T12:00:00'):new Date()}
@@ -271,7 +273,7 @@ function renderDrops(){
   const t=today(), box=$('drops'); box.innerHTML='';
   let next=null;
   DROPS.forEach(g=>{
-    const open=t>=new Date(g.d+'T00:00:00');
+    const open=TODAS_ABIERTAS||t>=new Date(g.d+'T00:00:00');
     if(!open&&!next) next=g;
     const w=document.createElement('div');w.className='grupo';
     w.innerHTML='<div class="drop-h"><span class="mes">'+g.mes+'</span><span class="fi">'+g.fi+'</span><span class="tt">'+g.tt+'</span><span class="st '+(open?'open':'lock')+'">'+(open?'DESBLOQUEADO':'SE ABRE EL '+fecha(g.d).toUpperCase())+'</span></div><div class="tiles"></div>';
