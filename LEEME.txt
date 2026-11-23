@@ -1,0 +1,29 @@
+INTERCAMBIO CON SABOR · LANDING DE CAMPAÑA · EL TAQUITO
+
+ARCHIVOS
+- index.html  Versión para publicar. Usa la fecha real para desbloquear cada mes.
+- demo.html   Versión para presentar al cliente. Trae una barra arriba para cambiar de postal y simular fechas (hoy, 12 dic, 6 ene, 2 feb).
+- img/        Frentes de las 15 postales, fotos de archivo y logo. Debe ir junto al HTML.
+- media/      Carpeta vacía para los videos y la música.
+
+UNA PÁGINA, 15 POSTALES
+Cada postal abre la misma página con su número al final de la dirección:
+  https://TU-DOMINIO/postal/#p01  ...  #p15
+Ese es el enlace que va en el QR de cada postal.
+
+DESBLOQUEO POR MES
+- Diciembre (desde 12 dic 2026): 06, 13, 10, 09, 14
+- Enero (desde 6 ene 2027): 07, 08, 11, 12, 15
+- Febrero (desde 2 feb 2027): 01, 02, 03, 04, 05
+
+VIDEOS Y MÚSICA (pendientes)
+Guardarlos en media/ con estos nombres y la página los toma sola:
+- media/vid-05.mp4, vid-06.mp4, vid-07.mp4, vid-09.mp4, vid-10.mp4,
+  vid-11.mp4, vid-12.mp4, vid-13.mp4, vid-14.mp4, vid-15.mp4
+- media/mariachi.mp3
+Sin esos archivos la página funciona igual: muestra la foto fija y oculta el botón de música.
+
+ANTES DE PUBLICAR
+- Confirmar las condiciones del 10% (la página dice "condiciones de ejemplo").
+- WhatsApp configurado: 55 5432 7820. Para cambiarlo, buscar WA="525554327820" en el HTML.
+- Agregar la analítica del sitio (Google Analytics o Meta Pixel) para medir escaneos por postal.
