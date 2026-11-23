@@ -16,11 +16,12 @@ if (!$p || !is_file(DATOS . "/postales/$c.jpg")) {
 db()->prepare('UPDATE postales SET vistas=vistas+1 WHERE code=?')->execute([$c]);
 $para = trim((string)$p['para']); $de = trim((string)$p['de']);
 $img = SITIO . "/api/img.php?c=$c";
+$imgOg = SITIO . "/api/img.php?c=$c&og=1";
 $titulo = ($para ? "$para, te" : 'Te') . ' llegó una postal de El Taquito';
 $desc = ($de ? "$de te mandó" : 'Alguien te mandó') . ' un pedazo de nuestra historia. Ábrela y descárgala.';
 $og = '<meta property="og:type" content="website"><meta property="og:title" content="' . h($titulo) . '">'
-  . '<meta property="og:description" content="' . h($desc) . '"><meta property="og:image" content="' . h($img) . '">'
-  . '<meta property="og:image:width" content="1500"><meta property="og:image:height" content="1000">'
+  . '<meta property="og:description" content="' . h($desc) . '"><meta property="og:image" content="' . h($imgOg) . '">'
+  . '<meta property="og:image:width" content="1200"><meta property="og:image:height" content="800">'
   . '<meta property="og:url" content="' . h(SITIO . "/p/$c") . '"><meta name="twitter:card" content="summary_large_image">'
   . '<meta name="description" content="' . h($desc) . '">';
 cabeza($titulo, $og);
