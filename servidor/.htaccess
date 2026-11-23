@@ -2,3 +2,10 @@ Options -Indexes
 RewriteEngine On
 RewriteRule ^p/([A-Za-z0-9]{6})/?$ p/index.php?c=$1 [L,QSA]
 RewriteRule ^t/([A-Za-z0-9]{10})/?$ t/index.php?k=$1 [L,QSA]
+
+# Que el navegador siempre pida la versión nueva de las páginas
+<IfModule mod_headers.c>
+  <FilesMatch "\.html$">
+    Header set Cache-Control "no-cache, must-revalidate"
+  </FilesMatch>
+</IfModule>
