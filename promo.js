@@ -52,10 +52,12 @@
     function decir(t, ok) { msg.textContent = t; msg.className = 'pr-msg ' + (ok ? 'ok' : 'error'); msg.hidden = false; }
     function mensajeWa(promo) {
       var de = (($('de') || {}).value || '').trim(), n = postalActual();
-      return '¡Hola! Ya compartí mi postal de El Taquito en mi historia y los etiqueté en @' + CUENTA + ' 🎉\n' +
+      var tit = (n && typeof P !== 'undefined' && P[n]) ? ' «' + P[n].t + '»' : '';
+      return '¡Hola! Vengo de la postal N.º ' + (n || '—') + tit + ' (código POSTAL' + (n || '') + ').\n' +
+        'Ya compartí mi postal personalizada en mi historia y los etiqueté en @' + CUENTA + ' 🎉\n' +
         'Elegí mi cupón: *' + promo + '*.\n' +
         'Te adjunto la captura de mi historia.' +
-        (n ? '\nPostal N.º ' + n : '') + (de ? '\nMi nombre: ' + de : '');
+        (de ? '\nMi nombre: ' + de : '');
     }
     bWa.addEventListener('click', function (e) {
       var sel = app.querySelector('input[name=tqPromo]:checked');

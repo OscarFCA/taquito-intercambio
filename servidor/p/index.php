@@ -59,7 +59,7 @@ cabeza($titulo, $og);
     <?php if ($p['postal']): ?>
     <div class="historia-link">
       <div><b>Tu postal tiene historia</b><span>Descubre quién se sentó a nuestra mesa.</span></div>
-      <a class="btn btn-crema" style="background:var(--crema);color:var(--carbon)" href="/postal/#p<?= h($p['postal']) ?>">Conocer la historia</a>
+      <a class="btn btn-crema" style="background:var(--crema);color:var(--carbon)" href="/postal/<?= h($p['postal']) ?>/">Conocer la historia</a>
     </div>
     <?php endif; ?>
   </section>
@@ -69,7 +69,7 @@ cabeza($titulo, $og);
     <div class="eyebrow">Ahora te toca a ti</div>
     <h2>Crea tu postal personalizada y descubre una sorpresa</h2>
     <p class="lead">Con tu foto, para alguien especial. Toma menos de un minuto.</p>
-    <a class="btn btn-rojo" href="/postal/?origen=<?= $c ?>#crea">Crear mi postal</a>
+    <a class="btn btn-rojo" href="/postal/<?= $p['postal'] ? h($p['postal']) . '/' : '' ?>?origen=<?= $c ?>#crea">Crear mi postal</a>
   </div>
 </main>
 <footer><div class="wrap">Miguel Noreña 25, San José Insurgentes, CDMX · Lunes a sábado 13:00 a 22:00 · Domingo 13:00 a 20:00</div></footer>

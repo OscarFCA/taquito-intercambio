@@ -126,6 +126,14 @@ footer img{height:44px}
 .musica.on{background:var(--verde)}
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--verde);color:var(--crema);padding:10px 18px;border-radius:999px;font-weight:600;font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none}
 .toast.on{opacity:1}
+.candado,.postal-lk{display:none}
+body.bloqueada .candado{display:block;margin-top:18px;background:var(--carbon);color:var(--crema);border-radius:14px;padding:16px 18px;border-left:6px solid var(--rojo)}
+body.bloqueada .candado b{display:block;font-family:Oswald;font-size:22px;text-transform:uppercase;color:#fff;margin-bottom:4px}
+body.bloqueada .candado>span{font-size:14.5px}
+body.bloqueada #frente{filter:grayscale(1) blur(7px) brightness(.6)}
+body.bloqueada .postal{overflow:hidden}
+body.bloqueada .postal-lk{display:grid;place-items:center;position:absolute;inset:0;font-size:64px}
+body.bloqueada #historia,body.bloqueada .torn,body.bloqueada .steps a[href="#historia"]{display:none}
 </style>
 <link rel="stylesheet" href="fx.css?v=3">
 <link rel="stylesheet" href="promo.css?v=6">
@@ -137,7 +145,7 @@ footer img{height:44px}
   <label style="display:inline;color:var(--crema);font-size:12.5px;letter-spacing:0">Ver como postal
   <select id="pick"></select></label>
   <label style="display:inline;color:var(--crema);font-size:12.5px;letter-spacing:0;margin-left:10px">Simular fecha
-  <select id="simdate"><option value="2026-11-19">Hoy</option><option value="2026-12-12" selected>12 dic</option><option value="2027-01-06">6 ene</option><option value="2027-02-02">2 feb</option></select></label></div>
+  <select id="simdate"><option value="" selected>Hoy</option><option value="2027-01-01">1 ene</option><option value="2027-02-01">1 feb</option></select></label></div>
 
 <header>
   <img src="img/logo-crema.png" alt="El Taquito">
@@ -146,11 +154,12 @@ footer img{height:44px}
 
 <section class="hero">
   <div class="wrap grid">
-    <div class="postal"><img id="frente" alt="Postal"></div>
+    <div class="postal"><img id="frente" alt="Postal"><div class="postal-lk" aria-hidden="true">🔒</div></div>
     <div>
       <div class="eyebrow">Intercambio con Sabor</div>
       <h1>Esta historia continúa contigo</h1>
       <p class="lead" style="margin-top:14px">Alguien te regaló un pedazo de nuestra historia. Desde 1917, las mejores historias se comparten alrededor de una mesa.</p>
+      <div class="candado"><b>Esta postal se abre el <span id="cdFecha">1 de enero</span></b><span>Guárdala: ese día aquí descubrirás la historia detrás de su fotografía. Mientras, crea tu postal personalizada y conoce las postales de diciembre.</span></div>
       <div class="steps">
         <a href="#historia"><span class="n">1</span>Descubre la historia de tu postal</a>
         <a href="#crea"><span class="n">2</span>Crea tu postal personalizada y descubre una sorpresa</a>
@@ -257,7 +266,7 @@ footer img{height:44px}
   </div>
 </section>
 
-<section class="coleccion" style="padding-top:0">
+<section class="coleccion" id="coleccion" style="padding-top:0">
   <div class="wrap">
     <div class="eyebrow">La colección · de Guadalupe a la Candelaria</div>
     <h2>15 postales, 15 historias</h2>
@@ -282,12 +291,19 @@ footer img{height:44px}
 
 /* ----- Desbloqueos por mes ----- */
 const DROPS=[
- {mes:'Diciembre',fi:'12 DIC · GUADALUPE Y POSADAS',tt:'Banquetes de altura',d:'2026-12-12',ids:['06','13','10','09','14']},
- {mes:'Enero',fi:'6 ENE · DÍA DE REYES',tt:'Artistas de la casa',d:'2027-01-06',ids:['07','08','11','12','15']},
- {mes:'Febrero',fi:'2 FEB · CANDELARIA',tt:'El mes de Marilyn',d:'2027-02-02',ids:['01','02','03','04','05']}
+ {mes:'Diciembre',fi:'DICIEMBRE · GUADALUPE Y POSADAS',tt:'Banquetes de altura',d:'2026-11-01',ids:['06','13','10','09','14']},
+ {mes:'Enero',fi:'1 ENE · DÍA DE REYES',tt:'Artistas de la casa',d:'2027-01-01',ids:['07','08','11','12','15']},
+ {mes:'Febrero',fi:'1 FEB · CANDELARIA',tt:'El mes de Marilyn',d:'2027-02-01',ids:['01','02','03','04','05']}
 ];
-/* true = las 15 postales abiertas sin importar la fecha. Para volver al desbloqueo por mes, poner false. */
-const TODAS_ABIERTAS=true;
+/* true = las 15 postales abiertas sin importar la fecha. false = cada grupo abre en su fecha (diciembre ya está abierto). */
+const TODAS_ABIERTAS=false;
+function grupoDe(n){return DROPS.find(g=>g.ids.indexOf(n)>=0)}
+function abierta(n){const g=grupoDe(n);return TODAS_ABIERTAS||!g||today()>=new Date(g.d+'T00:00:00')}
+/* Cada postal tiene su landing: /postal/01/ … /postal/15/ (se generan con landings.py). demo.html sigue con #pNN. */
+const FIJA=window.POSTAL_FIJA||'';
+const LANDINGS=!/demo\.html$/.test(location.pathname);
+function irPostal(n){if(LANDINGS)location.href=n+'/';else location.hash='p'+n}
+window.irPostal=irPostal;
 const MESES=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
 function fecha(iso){const [y,m,d]=iso.split('-').map(Number);return d+' '+MESES[m-1]}
 function today(){const v=$('simdate')?$('simdate').value:null;return v?new Date(v+'T12:00:00'):new Date()}
@@ -303,7 +319,7 @@ function renderDrops(){
     g.ids.forEach(n=>{
       const a=document.createElement('a');a.className='tile'+(open?'':' locked')+(n===cur?' on':'');a.dataset.n=n;
       a.innerHTML='<img src="img/frente-'+n+'.jpg" alt="Postal '+n+'" loading="lazy"><span>N.º '+n+'</span>'+(open?'':'<div class="lk"><div><b>'+fecha(g.d)+'</b>Próximamente</div></div>');
-      if(open){a.href='#p'+n;a.onclick=e=>{e.preventDefault();location.hash='p'+n;window.scrollTo({top:0,behavior:'smooth'})}}
+      if(open){a.href=LANDINGS?n+'/':'#p'+n;if(!LANDINGS)a.onclick=e=>{e.preventDefault();location.hash='p'+n;window.scrollTo({top:0,behavior:'smooth'})}}
       tl.appendChild(a);
     });
     box.appendChild(w);
@@ -339,7 +355,7 @@ const pick=$('pick'), rail=$('rail');
 const ORDER=Object.keys(P).sort();
 ORDER.forEach(n=>{
   const o=document.createElement('option');o.value=n;o.textContent='N.º '+n+' · '+P[n].t;pick.appendChild(o);
-  const a=document.createElement('a');a.href='#p'+n;a.innerHTML='<img src="img/frente-'+n+'.jpg" alt="Postal '+n+'" loading="lazy"><span>N.º '+n+'</span>';a.dataset.n=n;rail.appendChild(a);
+  const a=document.createElement('a');a.href=LANDINGS?n+'/':'#p'+n;a.innerHTML='<img src="img/frente-'+n+'.jpg" alt="Postal '+n+'" loading="lazy"><span>N.º '+n+'</span>';a.dataset.n=n;rail.appendChild(a);
 });
 function wa(msg){return 'https://wa.me/'+WA+'?text='+encodeURIComponent(msg)}
 function show(n){
@@ -348,21 +364,31 @@ function show(n){
   $('hTitle').textContent=p.t; $('story').textContent=p.s; $('curioso').textContent=p.d;
   $('dato').textContent='POSTAL N.º '+n+' · '+p.y.toUpperCase(); $('figcap').textContent='Archivo El Taquito · '+p.y;
   pick.value=n;
+  const ab=abierta(n), g=grupoDe(n);
+  document.body.classList.toggle('bloqueada',!ab);
+  if(!ab){$('cdFecha').textContent=fecha(g.d).replace(' ',' de ').replace('ene','enero').replace('feb','febrero');$('hTitle').textContent='';$('story').textContent='';$('curioso').textContent=''}
   rail.querySelectorAll('a').forEach(a=>a.classList.toggle('on',a.dataset.n===n));
   renderDrops();
-  $('waMesa').href=wa('Hola, recibí la postal N.º '+n+' (código POSTAL'+n+'). Quiero reservar mesa para __ personas el día __ a las __.');
-  $('waInter').href=wa('Hola, vengo de la postal N.º '+n+' (código POSTAL'+n+'). Quiero cotizar un intercambio navideño para __ personas el día __.');
-  $('waLibro').href=wa('Hola, vengo de la postal N.º '+n+' ('+p.t+'). Me gustaría saber más del libro de la historia de El Taquito y cómo conseguirlo.');
-  $('waEvento').href=wa('Hola, vengo de la postal N.º '+n+' (código POSTAL'+n+'). Me interesa un evento o taquiza para __ personas. ¿Me pasan informes?');
+  const ORIG='Hola, vengo de la postal N.º '+n+' «'+p.t+'» (código POSTAL'+n+').';
+  $('waMesa').href=wa(ORIG+' Quiero reservar mesa para __ personas el día __ a las __.');
+  $('waInter').href=wa(ORIG+' Quiero cotizar un intercambio navideño para __ personas el día __.');
+  $('waLibro').href=wa(ORIG+' Me gustaría saber más del libro de la historia de El Taquito y cómo conseguirlo.');
+  $('waEvento').href=wa(ORIG+' Me interesa un evento o taquiza para __ personas. ¿Me pasan informes?');
   updShare();
 }
+/* Cada postal tiene su subdominio: postal01.eltaquito.com.mx ... postal15. El #pNN sigue funcionando y manda sobre el subdominio. */
 const SUB=(location.hostname.match(/^postal(\d\d)\./)||[])[1];
-if(SUB&&P[SUB]) cur=SUB;
-function route(){const m=(location.hash||'').match(/^#p(\d\d)$/); show(m?m[1]:cur)}
+if(SUB&&P[SUB]&&LANDINGS&&!FIJA) location.replace('https://eltaquito.com.mx/postal/'+SUB+'/');
+if(FIJA&&P[FIJA]) cur=FIJA;
+function route(){const m=(location.hash||'').match(/^#p(\d\d)$/);
+  if(m&&P[m[1]]&&LANDINGS){if(m[1]!==FIJA){location.replace(m[1]+'/');return}}
+  show(FIJA||(m?m[1]:cur))}
 window.addEventListener('hashchange',route); route();
-pick.addEventListener('change',()=>{location.hash='p'+pick.value});
-$('simdate').addEventListener('change',()=>renderDrops());
-rail.addEventListener('click',e=>{const a=e.target.closest('a');if(a){e.preventDefault();location.hash='p'+a.dataset.n;window.scrollTo({top:0,behavior:'smooth'})}});
+pick.addEventListener('change',()=>irPostal(pick.value));
+/* Con <base href="../"> los enlaces #ancla apuntarían a /postal/; si fx.js no los atendió, se desplaza aquí */
+if(FIJA) window.addEventListener('click',e=>{const a=e.target.closest&&e.target.closest('a[href^="#"]');if(!a||e.defaultPrevented)return;const t=document.getElementById(a.getAttribute('href').slice(1));if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth'})}});
+$('simdate').addEventListener('change',()=>route());
+rail.addEventListener('click',e=>{const a=e.target.closest('a');if(a&&!LANDINGS){e.preventDefault();location.hash='p'+a.dataset.n;window.scrollTo({top:0,behavior:'smooth'})}});
 
 
 function toast(t){const el=$('toast');el.textContent=t;el.classList.add('on');setTimeout(()=>el.classList.remove('on'),1800)}
@@ -463,7 +489,7 @@ function make(){
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.20/dist/lenis.min.js"></script>
-<script src="promo.js?v=6"></script>
-<script src="fx.js?v=3"></script>
+<script src="promo.js?v=7"></script>
+<script src="fx.js?v=4"></script>
 </body>
 </html>

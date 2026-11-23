@@ -240,7 +240,7 @@
     if (ocupado) return;
     var L = abiertas(), i = L.indexOf(cur), n = L[(i + dir + L.length) % L.length];
     if (!n || n === cur) { gsap.to(postal, { x: 0, rotation: -1.6, duration: .4 }); return; }
-    dirNav = dir; location.hash = 'p' + n;
+    dirNav = dir; if (W.irPostal) W.irPostal(n); else location.hash = 'p' + n;
   }
   g('.fx-prev', col).addEventListener('click', function () { ir(-1); });
   g('.fx-next', col).addEventListener('click', function () { ir(1); });
