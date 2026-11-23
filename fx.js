@@ -334,14 +334,7 @@
   }
 
   /* Crea tu postal */
-  aparecer([g('.crea .eyebrow'), g('.crea .lead')]);
-  aparecer([g('.crea .card')], { x: -70, y: 0 });
-  aparecer([g('#preview')], { x: 70, y: 0, rotation: 4 }, g('.crea .card'));
-  new MutationObserver(function () {
-    var im = g('#preview img'); if (!im) return;
-    gsap.fromTo(im, { scale: .55, rotation: -10, opacity: 0 }, { scale: 1, rotation: 0, opacity: 1, duration: .9, ease: 'back.out(1.7)' });
-    var c = centro(g('#preview')); rafaga(c[0], c[1], { n: movil ? 70 : 110, vel: 11, chispa: .35, arriba: 4 });
-  }).observe(g('#preview'), { childList: true });
+  aparecer([g('#cz')], { y: 60, scale: .96 });
 
   /* Cupón: rayos que giran, contador y sello del código */
   var cupon = g('.cupon');
@@ -436,7 +429,7 @@
 
   var visto = false;
   try { visto = sessionStorage.getItem('fxIntro') === '1'; sessionStorage.setItem('fxIntro', '1'); } catch (_) { }
-  var conIntro = /demo\.html$/.test(location.pathname) || !visto;
+  var conIntro = (/demo\.html$/.test(location.pathname) || !visto) && location.hash !== '#crea';
 
   if (!conIntro) {
     gsap.from(postal, { scale: .85, rotation: -12, opacity: 0, duration: 1, ease: 'back.out(1.4)' });

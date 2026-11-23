@@ -22,7 +22,7 @@ $og = '<meta property="og:type" content="website"><meta property="og:title" cont
   . '<meta property="og:description" content="' . h($desc) . '"><meta property="og:image" content="' . h($img) . '">'
   . '<meta property="og:image:width" content="1500"><meta property="og:image:height" content="1000">'
   . '<meta property="og:url" content="' . h(SITIO . "/p/$c") . '"><meta name="twitter:card" content="summary_large_image">'
-  . '<meta name="description" content="' . h($desc) . '"><link rel="stylesheet" href="/postal/promo.css?v=1">';
+  . '<meta name="description" content="' . h($desc) . '">';
 cabeza($titulo, $og);
 ?>
 <style>
@@ -37,8 +37,11 @@ cabeza($titulo, $og);
  display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap;text-align:left}
 .historia-link b{font-family:Oswald;font-size:22px;text-transform:uppercase;display:block}
 .historia-link span{font-family:Lora;font-style:italic;opacity:.9}
-.otra{text-align:center;margin-top:44px}
-.otra p{margin:8px 0 18px}
+.otra{text-align:center;margin-top:44px;background:#fffaf0;border:2px dashed var(--rojo);border-radius:22px;padding:34px 22px}
+.otra h2{margin:8px auto 0;max-width:20ch}
+.otra p{margin:10px 0 22px}
+.regalito{font-size:58px;line-height:1;animation:menea 3s ease-in-out infinite;display:inline-block}
+@keyframes menea{0%,62%,100%{transform:rotate(0)}66%{transform:rotate(-9deg)}72%{transform:rotate(8deg)}78%{transform:rotate(-5deg)}84%{transform:rotate(2deg)}}
 </style>
 <header class="top"><a href="/postal/"><img src="/postal/img/logo-crema.png" alt="El Taquito"></a></header>
 <main class="wrap">
@@ -60,14 +63,12 @@ cabeza($titulo, $og);
     <?php endif; ?>
   </section>
 
-  <section id="descuento" class="promo-sec">
-    <div class="cupon"><div class="sun"></div><div id="promoApp"></div></div>
-  </section>
-
   <div class="otra">
-    <h2>¿Quieres mandar una tú?</h2>
-    <p class="lead">Crea tu propia postal con tu foto y regálasela a alguien especial.</p>
-    <a class="btn btn-verde" href="/postal/#crea">Crear mi postal</a>
+    <div class="regalito" aria-hidden="true">🎁</div>
+    <div class="eyebrow">Ahora te toca a ti</div>
+    <h2>Crea tu postal personalizada y descubre la sorpresa que te preparamos</h2>
+    <p class="lead">Con tu foto, para alguien especial. Toma menos de un minuto.</p>
+    <a class="btn btn-rojo" href="/postal/?origen=<?= $c ?>#crea">Crear mi postal</a>
   </div>
 </main>
 <footer><div class="wrap">Miguel Noreña 25, San José Insurgentes, CDMX · Lunes a sábado 13:00 a 22:00 · Domingo 13:00 a 20:00</div></footer>
@@ -86,5 +87,4 @@ window.TQ = {origen: <?= json_encode($c) ?>, postal: <?= json_encode((string)$p[
   });
 })();
 </script>
-<script src="/postal/promo.js?v=1"></script>
 </body></html>

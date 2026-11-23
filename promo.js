@@ -10,6 +10,7 @@
   var TQ = W.TQ || {};
   var BASE = TQ.origen ? '/postal/' : '';            // en /p/ las imágenes viven en /postal/
   var app = D.getElementById('promoApp');
+  var REF = (function () { try { var r = new URLSearchParams(location.search).get('origen') || ''; return /^[A-Z0-9]{6}$/.test(r) ? r : ''; } catch (e) { return ''; } })();
   function $(id) { return D.getElementById(id); }
   function postalActual() { return TQ.postal || (typeof cur !== 'undefined' ? cur : ''); }
   function aviso(t) { if (typeof toast === 'function') toast(t); else alert(t); }
@@ -18,15 +19,15 @@
   if (app) {
     app.innerHTML =
       '<div class="pr-in">' +
-      '<div class="eyebrow">Paso 3 · Tu premio por compartir</div>' +
+      '<div class="eyebrow">¡Sorpresa! · Tu premio por compartir</div>' +
       '<h2>Comparte tu postal y elige tu premio</h2>' +
       '<div class="pr-opc" role="radiogroup" aria-label="Elige tu promoción">' +
       '<label class="pr-card"><input type="radio" name="tqPromo" value="2x1"><b>2×1</b><span>EN BEBIDAS</span><em data-q="2x1">&nbsp;</em></label>' +
       '<label class="pr-card"><input type="radio" name="tqPromo" value="10"><b>10%</b><span>EN TU CONSUMO</span><em data-q="10">&nbsp;</em></label>' +
       '</div>' +
       '<ol class="pr-pasos">' +
-      '<li><i>1</i><div><b>Comparte tu postal en tu historia</b> de Instagram, Facebook o TikTok y <b>etiquétanos @' + CUENTA + '</b>.<br>' +
-      '<button type="button" class="pr-story" id="prStory">Descargar imagen para mi historia</button></div></li>' +
+      '<li><i>1</i><div><b>Comparte tu postal personalizada en tu historia</b> de Instagram, Facebook o TikTok y <b>etiquétanos @' + CUENTA + '</b>.<br>' +
+      '<button type="button" class="pr-story" id="prStory">Compartir mi postal en redes</button></div></li>' +
       '<li><i>2</i><div><b>Avísanos aquí</b> con tu usuario y el premio que elegiste.</div></li>' +
       '<li><i>3</i><div><b>Te mandamos tu ticket digital</b> por mensaje. Muéstralo a tu mesero de lunes a viernes.</div></li>' +
       '</ol>' +
@@ -74,7 +75,7 @@
       var btn = form.querySelector('button'); btn.disabled = true; btn.textContent = 'Enviando…';
       fetch(API + 'solicitud.php', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ red: $('prRed').value, usuario: usuario, promo: sel.value, postal: postalActual(), origen: TQ.origen || '' })
+        body: JSON.stringify({ red: $('prRed').value, usuario: usuario, promo: sel.value, postal: postalActual(), origen: TQ.origen || REF })
       }).then(function (r) { return r.json(); }).then(function (d) {
         if (d.ok) {
           decir('¡Listo! ' + d.mensaje, true);
@@ -142,19 +143,19 @@
     }
     var bStory = $('prStory');
     /* Se prepara antes de tocar para que el botón comparta al instante (iPhone lo exige) */
-    if ('IntersectionObserver' in W) new IntersectionObserver(function (es) { if (es[0].isIntersecting) prepararHistoria(); }).observe(app);
+    W.tqPrepararHistoria = prepararHistoria;
     var pv = $('preview'); if (pv) new MutationObserver(function () { historiaLista = null; }).observe(pv, { childList: true });
     bStory.addEventListener('click', function () {
       var listo = historiaLista;
       if (!listo) { bStory.textContent = 'Preparando tu imagen…'; prepararHistoria(); }
       (listo || historiaLista).then(function (f) {
-        bStory.textContent = 'Descargar imagen para mi historia';
+        bStory.textContent = 'Compartir mi postal en redes';
         if (navigator.canShare && navigator.canShare({ files: [f] })) {
           navigator.share({ files: [f] }).catch(function (e) { if (e && e.name === 'NotAllowedError') bajar(f); });
         } else bajar(f);
         if (navigator.clipboard) navigator.clipboard.writeText('@' + CUENTA + ' #IntercambioConSabor').catch(function () { });
         aviso('Copiamos @' + CUENTA + ' para que nos etiquetes');
-      }).catch(function () { bStory.textContent = 'Descargar imagen para mi historia'; aviso('No pudimos preparar la imagen. Intenta de nuevo.'); });
+      }).catch(function () { bStory.textContent = 'Compartir mi postal en redes'; aviso('No pudimos preparar la imagen. Intenta de nuevo.'); });
     });
   }
 
@@ -200,5 +201,72 @@
       var sh = envio.querySelector('[data-a=share]');
       if (sh) sh.onclick = function () { navigator.share({ title: 'Una postal de El Taquito', text: texto }).catch(function () { }); };
     }
+  }
+  /* ---------- 4. Recorrido: crea tu postal y descubre la sorpresa ---------- */
+  var cz = $('cz');
+  if (cz) {
+    var pasos = cz.querySelectorAll('.cz-step'), paso = 0, esperando = false;
+    var paso3 = cz.querySelector('[data-s="3"]'), oscuro = $('czDark'), prev = $('preview');
+    function ir(n) {
+      paso = +n;
+      Array.prototype.forEach.call(pasos, function (p) { p.classList.toggle('cz-on', +p.dataset.s === paso); });
+      var top = $('crea').getBoundingClientRect().top + W.scrollY - 76;
+      if (Math.abs(W.scrollY - top) > 60) W.scrollTo({ top: top, behavior: 'smooth' });
+      if (paso === 2) setTimeout(function () { var p = $('para'); if (p && !p.value) p.focus({ preventScroll: true }); }, 450);
+      if (typeof ScrollTrigger !== 'undefined') setTimeout(function () { ScrollTrigger.refresh(); }, 600);
+    }
+    cz.addEventListener('click', function (e) {
+      var b = e.target.closest('[data-go]'); if (!b || b.disabled) return;
+      ir(b.dataset.go);
+      if (b.classList.contains('cz-cta') && (typeof userImg === 'undefined' || !userImg)) { var f = $('file'); if (f) f.click(); }
+    });
+    function fotoActual() { try { return typeof userImg !== 'undefined' && userImg ? userImg : null; } catch (e) { return null; } }
+    /* Cada vez que la página arma la postal */
+    new MutationObserver(function () {
+      var im = D.querySelector('#preview img'); if (!im) return;
+      var u = fotoActual();
+      if (u) {
+        $('czNext').disabled = false;
+        var th = $('czThumb');
+        th.innerHTML = '<img src="' + u.src + '" alt=""><div><b>¡Qué buena foto!</b><span class="nota">Toca arriba si quieres cambiarla.</span></div>';
+        th.hidden = false;
+      }
+      if (esperando) {
+        esperando = false;
+        im.classList.add('revela');
+        setTimeout(function () {
+          oscuro.style.opacity = 0;
+          setTimeout(function () { oscuro.hidden = true; oscuro.style.opacity = ''; }, 600);
+          paso3.classList.remove('cz-revelando');
+          if (W.fxRafaga) W.fxRafaga(im);
+          var para = ($('para').value || '').trim();
+          $('enviarPostal').textContent = para ? 'Enviar a ' + para : 'Enviar mi postal';
+          if (!$('prBox').hidden && W.tqPrepararHistoria) W.tqPrepararHistoria();
+        }, 1500);
+      }
+    }).observe(prev, { childList: true });
+    /* «Crear mi postal»: la página arma la imagen y aquí se revela */
+    $('make').addEventListener('click', function () {
+      if (!fotoActual()) return;
+      esperando = true;
+      oscuro.hidden = false; paso3.classList.add('cz-revelando');
+      ir(3);
+    });
+    $('czBajar').addEventListener('click', function () {
+      var im = D.querySelector('#preview img'); if (!im) return;
+      var a = D.createElement('a'); a.href = im.src; a.download = 'mi-postal-el-taquito.jpg'; D.body.appendChild(a); a.click(); a.remove();
+    });
+    /* Abrir el regalo */
+    $('abrirRegalo').addEventListener('click', function () {
+      var b = this; b.classList.add('abierto');
+      setTimeout(function () { if (W.fxRafaga) W.fxRafaga(b); }, 380);
+      setTimeout(function () {
+        b.hidden = true; $('prBox').hidden = false;
+        if (W.tqPrepararHistoria) W.tqPrepararHistoria();
+        var y = $('prBox').getBoundingClientRect().top + W.scrollY - 90;
+        W.scrollTo({ top: y, behavior: 'smooth' });
+        if (typeof ScrollTrigger !== 'undefined') ScrollTrigger.refresh();
+      }, 1000);
+    });
   }
 })();

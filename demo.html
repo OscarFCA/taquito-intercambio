@@ -124,8 +124,8 @@ footer img{height:44px}
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--verde);color:var(--crema);padding:10px 18px;border-radius:999px;font-weight:600;font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none}
 .toast.on{opacity:1}
 </style>
-<link rel="stylesheet" href="fx.css?v=2">
-<link rel="stylesheet" href="promo.css?v=1">
+<link rel="stylesheet" href="fx.css?v=3">
+<link rel="stylesheet" href="promo.css?v=2">
 <script>if(!matchMedia("(prefers-reduced-motion: reduce)").matches){document.documentElement.className+=" fx-pre";setTimeout(function(){document.documentElement.classList.remove("fx-pre")},3000)}</script>
 </head>
 <body>
@@ -138,7 +138,7 @@ footer img{height:44px}
 
 <header>
   <img src="img/logo-crema.png" alt="El Taquito">
-  <nav><a href="#historia">La historia</a><a href="#crea">Crea tu postal</a><a href="#descuento">Tu premio</a><a href="#reserva">Reserva</a></nav>
+  <nav><a href="#historia">La historia</a><a href="#crea">Crea tu postal</a><a href="#reserva">Reserva</a></nav>
 </header>
 
 <section class="hero">
@@ -150,8 +150,8 @@ footer img{height:44px}
       <p class="lead" style="margin-top:14px">Alguien te regaló un pedazo de nuestra historia. Desde 1917, las mejores historias se comparten alrededor de una mesa.</p>
       <div class="steps">
         <a href="#historia"><span class="n">1</span>Descubre la historia de tu postal</a>
-        <a href="#crea"><span class="n">2</span>Crea tu propia postal con tu foto</a>
-        <a href="#descuento"><span class="n">3</span>Comparte y gana 2×1 o 10%</a>
+        <a href="#crea"><span class="n">2</span>Crea tu postal personalizada</a>
+        <a href="#crea"><span class="n">3</span>Descubre la sorpresa que te preparamos</a>
         <a href="#reserva"><span class="n">4</span>Reserva tu mesa o tu evento</a>
       </div>
     </div>
@@ -180,33 +180,66 @@ footer img{height:44px}
 
 <section class="crea" id="crea">
   <div class="wrap">
-    <div class="eyebrow">Paso 2</div>
-    <h2>Crea tu propia postal</h2>
-    <p class="lead" style="margin:10px 0 26px">Sube una foto con tu gente y conviértela en una postal de la colección para regalarla a alguien especial.</p>
-    <div class="grid">
-      <div class="card">
+    <div class="cz" id="cz">
+
+      <div class="cz-step cz-on" data-s="0">
+        <div class="cz-intro">
+          <div class="regalo" aria-hidden="true"><i class="tapa"></i><i class="caja"></i><i class="lazo"></i></div>
+          <div>
+            <div class="eyebrow">Paso 2 · Tu postal</div>
+            <h2>Crea tu postal personalizada y descubre la sorpresa que te preparamos</h2>
+            <p class="lead">Con tu foto, para alguien especial. Toma menos de un minuto.</p>
+            <button class="btn btn-rojo cz-cta" type="button" data-go="1">Crear mi postal</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="cz-step" data-s="1">
+        <div class="cz-prog"><span class="on">1 · Tu foto</span><span>2 · Dedicatoria</span><span>3 · Tu sorpresa</span></div>
+        <h3 class="cz-h">Sube tu foto</h3>
+        <p class="cz-p">Una foto con tu gente: tu familia, tus amigos, tu pareja.</p>
         <div class="drop" id="drop">Toca para subir tu foto<small>o arrástrala aquí · JPG o PNG</small></div>
         <input type="file" id="file" accept="image/*" hidden>
-        <label for="para">PARA</label><input type="text" id="para" placeholder="¿A quién se la regalas?" maxlength="28">
-        <label for="de">CON CARIÑO</label><input type="text" id="de" placeholder="Tu nombre" maxlength="28">
-        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:18px">
-          <button class="btn btn-rojo" id="make">Crear mi postal</button>
-          <button class="btn btn-borde" id="enviarPostal" type="button">Enviar mi postal</button>
-        </div>
-        <div class="envio" id="envio" hidden></div>
-        <p class="nota">Versión de ejemplo: aquí la postal se arma con tu foto en el estilo de la colección. En la versión final, la IA convierte tu foto al estilo de las portadas.</p>
+        <div class="cz-thumb" id="czThumb" hidden></div>
+        <div class="cz-nav"><button class="cz-back" type="button" data-go="0">← Atrás</button><button class="btn btn-rojo" type="button" data-go="2" id="czNext" disabled>Siguiente</button></div>
       </div>
-      <div>
-        <div class="preview" id="preview">Tu postal aparecerá aquí</div>
-        <p class="nota" id="saveHint" hidden>Mantén presionada la imagen (o clic derecho) para guardarla.</p>
-      </div>
-    </div>
-  </div>
-</section>
 
-<section id="descuento" style="padding-top:0">
-  <div class="wrap">
-    <div class="cupon"><div class="sun"></div><div id="promoApp"></div></div>
+      <div class="cz-step" data-s="2">
+        <div class="cz-prog"><span class="ok">1 · Tu foto</span><span class="on">2 · Dedicatoria</span><span>3 · Tu sorpresa</span></div>
+        <h3 class="cz-h">¿Para quién es tu postal?</h3>
+        <label for="para">PARA</label><input type="text" id="para" placeholder="Ej. Mamá, Ana, mi equipo" maxlength="28">
+        <label for="de">DE PARTE DE</label><input type="text" id="de" placeholder="Tu nombre" maxlength="28">
+        <div class="cz-nav"><button class="cz-back" type="button" data-go="1">← Atrás</button><button class="btn btn-rojo" id="make" type="button">Crear mi postal ✨</button></div>
+      </div>
+
+      <div class="cz-step" data-s="3">
+        <div class="cz-prog"><span class="ok">1 · Tu foto</span><span class="ok">2 · Dedicatoria</span><span class="on">3 · Tu sorpresa</span></div>
+        <div class="cz-result">
+          <div class="cz-foto">
+            <div class="preview" id="preview">Tu postal aparecerá aquí</div>
+            <div class="cz-dark" id="czDark" hidden><span>Revelando tu postal…</span></div>
+          </div>
+          <div class="cz-side">
+            <h3 class="cz-h" id="czListo">¡Tu postal está lista!</h3>
+            <div class="cz-acc">
+              <button class="btn btn-verde" type="button" id="czBajar">Descargar mi postal</button>
+              <button class="btn btn-borde" id="enviarPostal" type="button">Enviar mi postal</button>
+            </div>
+            <div class="envio" id="envio" hidden></div>
+            <p class="nota" id="saveHint" hidden>También puedes mantener presionada la imagen para guardarla.</p>
+            <button class="cz-back" type="button" data-go="2">✎ Cambiar la dedicatoria</button>
+          </div>
+        </div>
+        <div class="sorpresa" id="sorpresa">
+          <button class="regalo-btn" type="button" id="abrirRegalo">
+            <span class="regalo" aria-hidden="true"><i class="tapa"></i><i class="caja"></i><i class="lazo"></i></span>
+            <b>Tu sorpresa te espera</b><span>Toca el regalo para abrirlo</span>
+          </button>
+          <div class="pr-box" id="prBox" hidden><div class="sun"></div><div id="promoApp"></div></div>
+        </div>
+      </div>
+
+    </div>
   </div>
 </section>
 
@@ -426,7 +459,7 @@ function make(){
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.20/dist/lenis.min.js"></script>
-<script src="promo.js?v=1"></script>
-<script src="fx.js?v=2"></script>
+<script src="promo.js?v=2"></script>
+<script src="fx.js?v=3"></script>
 </body>
 </html>
