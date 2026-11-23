@@ -128,3 +128,11 @@
 .envio .acc .wa{flex:1 1 100%;text-align:center;font-size:16px;padding:14px 18px}
 .envio .link{margin:12px 0 0}
 .envio .cargando{margin-top:8px;font:italic 15px Lora;animation:fxPulse 1.2s ease-in-out infinite}
+
+/* Regalo junto a la postal y envío hasta abajo */
+.cz-side .regalo-btn{width:100%;margin:14px 0 12px;animation:czIn .6s .2s both}
+.cz-side .regalo-btn .regalo{width:120px;height:120px}
+.sorpresa{margin-top:10px}
+.cz-envio{margin-top:28px;border-top:2px dashed #d8cba5;padding-top:24px}
+.cz-envio .envio{margin-top:0}
+.envio .cargando-no{margin-top:6px;font:italic 15px Lora;opacity:.9}

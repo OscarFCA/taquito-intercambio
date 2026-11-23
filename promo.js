@@ -151,12 +151,13 @@
     var pv2 = $('preview');
     if (pv2) new MutationObserver(function () { enlace = null; envio.hidden = true; }).observe(pv2, { childList: true });
     function nombrePara() { return (($('para') || {}).value || '').trim(); }
+    function titulo() { var p = nombrePara(); return p ? '¿Quieres mandársela a ' + esc(p) + '?' : '¿Quieres mandar tu postal?'; }
     W.tqEnlace = function () {
       var im = D.querySelector('#preview img');
       if (!im || subiendo) return;
       if (enlace && imgSubida === im.src) { mostrar(enlace); return; }
       subiendo = true;
-      envio.innerHTML = '<b>' + (nombrePara() ? 'Envíasela a ' + esc(nombrePara()) : 'Envía tu postal') + '</b><p class="cargando">Preparando tu enlace…</p>';
+      envio.innerHTML = '<b>' + titulo() + '</b><p class="cargando">Preparando tu enlace…</p>';
       envio.hidden = false;
       fetch(im.src).then(function (r) { return r.blob(); }).then(function (b) {
         var fd = new FormData();
@@ -178,7 +179,7 @@
     function mostrar(url) {
       var para = nombrePara();
       var texto = (para ? para + ', te' : 'Te') + ' mandé una postal de El Taquito 💌 Ábrela y descárgala aquí: ' + url;
-      envio.innerHTML = '<b>' + (para ? 'Envíasela a ' + esc(para) : 'Envía tu postal') + '</b>' +
+      envio.innerHTML = '<b>' + titulo() + '</b><p class="cargando-no">Mándale tu postal también por mensaje.</p>' +
         '<div class="acc">' +
         '<a class="wa" target="_blank" rel="noopener" href="https://wa.me/?text=' + encodeURIComponent(texto) + '">Enviar por WhatsApp</a>' +
         (navigator.share ? '<button type="button" data-a="share">Compartir</button>' : '') +
@@ -230,7 +231,7 @@
           setTimeout(function () { oscuro.hidden = true; oscuro.style.opacity = ''; }, 600);
           paso3.classList.remove('cz-revelando');
           if (W.fxRafaga) W.fxRafaga(im);
-          if (W.tqEnlace) W.tqEnlace();
+          if (!$('prBox').hidden && W.tqEnlace) W.tqEnlace();
           if (!$('prBox').hidden && W.tqPrepararHistoria) W.tqPrepararHistoria();
         }, 1500);
       }
@@ -247,7 +248,8 @@
       var b = this; b.classList.add('abierto');
       setTimeout(function () { if (W.fxRafaga) W.fxRafaga(b); }, 380);
       setTimeout(function () {
-        b.hidden = true; $('prBox').hidden = false;
+        b.hidden = true; $('prBox').hidden = false; $('czEnvio').hidden = false;
+        if (W.tqEnlace) W.tqEnlace();
         if (W.tqPrepararHistoria) W.tqPrepararHistoria();
         var y = $('prBox').getBoundingClientRect().top + W.scrollY - 90;
         W.scrollTo({ top: y, behavior: 'smooth' });
