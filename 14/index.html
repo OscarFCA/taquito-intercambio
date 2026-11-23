@@ -132,8 +132,9 @@ input[type=text]{width:100%;padding:12px 14px;border:2px solid #cdbf98;border-ra
 footer{background:var(--carbon);color:var(--crema);padding:36px 0;font-size:14px}
 footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;align-items:center}
 footer img{height:44px}
-.musica{position:fixed;right:18px;bottom:18px;z-index:9;background:var(--rojo);color:#fff;border:3px solid var(--crema);border-radius:999px;padding:12px 18px;font:700 14px Montserrat;cursor:pointer;box-shadow:0 8px 20px rgba(0,0,0,.25)}
+.musica{position:fixed;right:16px;bottom:16px;z-index:60;background:var(--rojo);color:#fff;border:3px solid var(--crema);border-radius:999px;padding:16px 24px;min-height:62px;display:flex;align-items:center;gap:10px;font:700 17px Montserrat;cursor:pointer;box-shadow:0 8px 20px rgba(0,0,0,.25)}
 .musica.on{background:var(--verde)}
+.musica #mIcon{font-size:22px;line-height:1}
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--verde);color:var(--crema);padding:10px 18px;border-radius:999px;font-weight:600;font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none}
 .toast.on{opacity:1}
 .candado,.postal-lk{display:none}
@@ -293,8 +294,8 @@ body.bloqueada #historia,body.bloqueada .torn,body.bloqueada .steps a[href="#his
     <div>Miguel Noreña 25, San José Insurgentes, CDMX<br>Lunes a sábado 13:00 a 22:00 · Domingo 13:00 a 20:00</div>
   </div>
 </footer>
-<button class="musica" id="musica" aria-label="Música"><span id="mIcon">♪</span> <span id="mTxt">Música de mariachi</span></button>
-<audio id="audio" src="media/mariachi.mp3" loop preload="none"></audio>
+<button class="musica" id="musica" aria-label="Música"><span id="mIcon">♪</span> <span id="mTxt">Poner música</span></button>
+<audio id="audio" src="media/mariachi.mp3?v=1" loop preload="none"></audio>
 <div class="toast" id="toast">Código copiado</div>
 
 <script>
@@ -416,9 +417,9 @@ function loadViva(n){
 }
 /* ----- Música ----- */
 const audio=$('audio'), mb=$('musica'); let started=false;
-audio.volume=.45;
+audio.volume=.15;   /* volumen bajo: música de fondo */
 audio.addEventListener('error',()=>{mb.hidden=true;started=true});
-function setM(on){mb.classList.toggle('on',on);$('mTxt').textContent=on?'Pausar música':'Música de mariachi'}
+function setM(on){mb.classList.toggle('on',on);$('mIcon').textContent=on?'🔇':'♪';$('mTxt').textContent=on?'Apagar música':'Poner música'}
 async function playM(){try{await audio.play();setM(true)}catch(e){toast('No se pudo reproducir la música')}}
 mb.addEventListener('click',e=>{e.stopPropagation();started=true;if(audio.paused)playM();else{audio.pause();setM(false)}});
 document.addEventListener('click',()=>{if(!started){started=true;playM()}},{once:false});
