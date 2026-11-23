@@ -75,15 +75,14 @@ footer{background:var(--carbon);color:var(--crema);padding:28px 0;font-size:13.5
 <footer><div class="wrap">Miguel Noreña 25, San José Insurgentes, CDMX · Lunes a sábado 13:00 a 22:00 · Domingo 13:00 a 20:00</div></footer>
 <script>
 (function(){
+  /* Compartir el ENLACE de la postal, no la imagen */
   var b = document.getElementById('compartirPostal');
-  if (!navigator.canShare) return;
+  var texto = 'Mira la postal que me regalaron en El Taquito 💌';
   b.hidden = false;
   b.addEventListener('click', function(){
-    fetch('../img/ejemplo-postal.jpg').then(function(r){return r.blob()}).then(function(bl){
-      var f = new File([bl], 'postal-el-taquito.jpg', {type:'image/jpeg'});
-      if (navigator.canShare({files:[f]})) return navigator.share({files:[f], title:'Mi postal de El Taquito'});
-      return navigator.share({url: location.href});
-    }).catch(function(){});
+    var url = location.href.split('#')[0];
+    if (navigator.share) { navigator.share({title: 'Mi postal de El Taquito', text: texto, url: url}).catch(function(){}); return; }
+    window.open('https://wa.me/?text=' + encodeURIComponent(texto + ' ' + url), '_blank', 'noopener');
   });
 })();
 </script>

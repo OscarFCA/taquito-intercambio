@@ -76,15 +76,14 @@ cabeza($titulo, $og);
 <script>
 window.TQ = {origen: <?= json_encode($c) ?>, postal: <?= json_encode((string)$p['postal']) ?>, historia: <?= json_encode("/api/img.php?c=$c") ?>};
 (function(){
+  /* Compartir el ENLACE de la postal, no la imagen */
   var b = document.getElementById('compartirPostal');
-  if (!navigator.canShare) return;
+  var texto = 'Mira la postal que me regalaron en El Taquito 💌';
   b.hidden = false;
   b.addEventListener('click', function(){
-    fetch(window.TQ.historia).then(function(r){return r.blob()}).then(function(bl){
-      var f = new File([bl], 'postal-el-taquito.jpg', {type:'image/jpeg'});
-      if (navigator.canShare({files:[f]})) return navigator.share({files:[f], title:'Mi postal de El Taquito'});
-      return navigator.share({url: location.href});
-    }).catch(function(){});
+    var url = location.href.split('#')[0];
+    if (navigator.share) { navigator.share({title: 'Mi postal de El Taquito', text: texto, url: url}).catch(function(){}); return; }
+    window.open('https://wa.me/?text=' + encodeURIComponent(texto + ' ' + url), '_blank', 'noopener');
   });
 })();
 </script>
