@@ -7,6 +7,7 @@
   var D = document, W = window;
   var API = 'https://eltaquito.com.mx/api/';
   var CUENTA = 'eltaquitotaurino';
+  var WA_NUM = '525554327820';   /* WhatsApp de Rafa: aquí llegan las capturas */
   var TQ = W.TQ || {};
   var BASE = TQ.origen ? '/postal/' : '';            // en /p/ las imágenes viven en /postal/
   var app = D.getElementById('promoApp');
@@ -22,23 +23,21 @@
       '<div class="eyebrow">¡Sorpresa! · Tu premio por compartir</div>' +
       '<h2>Comparte tu postal y elige tu premio</h2>' +
       '<div class="pr-opc" role="radiogroup" aria-label="Elige tu promoción">' +
-      '<label class="pr-card"><input type="radio" name="tqPromo" value="2x1"><b>2×1</b><span>EN BEBIDAS</span><em data-q="2x1">&nbsp;</em></label>' +
-      '<label class="pr-card"><input type="radio" name="tqPromo" value="10"><b>10%</b><span>EN TU CONSUMO</span><em data-q="10">&nbsp;</em></label>' +
+      '<label class="pr-card"><input type="radio" name="tqPromo" value="2x1"><b>2×1</b><span>EN BEBIDAS</span></label>' +
+      '<label class="pr-card"><input type="radio" name="tqPromo" value="10"><b>10%</b><span>EN TU CONSUMO</span></label>' +
       '</div>' +
       '<ol class="pr-pasos">' +
       '<li><i>1</i><div><b>Comparte tu postal personalizada en tu historia</b> de Instagram, Facebook o TikTok y <b>etiquétanos @' + CUENTA + '</b>.<br>' +
       '<button type="button" class="pr-story" id="prStory">Compartir mi postal en redes</button></div></li>' +
-      '<li><i>2</i><div><b>Avísanos aquí</b> con tu usuario y el premio que elegiste.</div></li>' +
-      '<li><i>3</i><div><b>Te mandamos tu ticket digital</b> por mensaje. Muéstralo a tu mesero de lunes a viernes.</div></li>' +
+      '<li><i>2</i><div><b>Toma una captura</b> de tu historia ya publicada.</div></li>' +
+      '<li><i>3</i><div><b>Mándanos la captura por WhatsApp</b> con el cupón que elegiste. Te confirmamos tu cupón por ahí; muéstralo a tu mesero de lunes a viernes.</div></li>' +
       '</ol>' +
-      '<form class="pr-form" id="prForm" novalidate>' +
-      '<select id="prRed" aria-label="Red social"><option value="instagram">Instagram</option><option value="facebook">Facebook</option><option value="tiktok">TikTok</option></select>' +
-      '<input id="prUser" type="text" placeholder="@tu_usuario" maxlength="50" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Tu usuario">' +
-      '<button class="btn btn-rojo" type="submit">Ya compartí · Quiero mi ticket</button>' +
-      '</form>' +
+      '<a class="pr-wa" id="prWa" href="https://wa.me/' + WA_NUM + '" target="_blank" rel="noopener">' +
+      '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.5 0-3-.4-4.3-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.3-.4.8-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2c0 1.3 1 2.6 1.1 2.8.1.2 1.9 2.9 4.6 4 1.7.7 2.4.8 3.2.7.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3z"/></svg>' +
+      'Enviar mi captura por WhatsApp</a>' +
       '<p class="pr-msg" id="prMsg" hidden></p>' +
+      '<p class="pr-nota">Cuando se abra el chat, adjunta la captura de tu historia con el clip 📎 y envía el mensaje.</p>' +
       '<ul class="pr-cond"><li>Una promoción por persona</li><li>Lunes a viernes</li><li>Hasta agotar existencias</li><li>Vigencia al 28 de febrero de 2027</li></ul>' +
-      '<p class="pr-legal">Usamos tu usuario solo para revisar tu historia y enviarte tu ticket.</p>' +
       '</div>';
 
     var radios = app.querySelectorAll('input[name=tqPromo]');
@@ -48,42 +47,28 @@
       });
     });
 
-    /* Existencias en vivo */
-    fetch(API + 'stock.php').then(function (r) { return r.json(); }).then(function (d) {
-      Object.keys(d.promos || {}).forEach(function (k) {
-        var q = d.promos[k].quedan, em = app.querySelector('[data-q="' + k + '"]');
-        if (!em) return;
-        if (q <= 0) {
-          em.textContent = 'AGOTADO';
-          var lab = em.parentNode, inp = lab.querySelector('input');
-          lab.classList.add('agotado'); inp.disabled = true; inp.checked = false; lab.classList.remove('sel');
-        } else em.textContent = q <= 30 ? '¡QUEDAN ' + q + '!' : 'DISPONIBLE';
-      });
-    }).catch(function () {
-      Array.prototype.forEach.call(app.querySelectorAll('[data-q]'), function (e) { e.textContent = 'DISPONIBLE'; });
-    });
-
-    /* Pedir el ticket */
-    var form = $('prForm'), msg = $('prMsg');
+    /* Mandar la captura por WhatsApp con el cupón elegido */
+    var msg = $('prMsg'), bWa = $('prWa');
     function decir(t, ok) { msg.textContent = t; msg.className = 'pr-msg ' + (ok ? 'ok' : 'error'); msg.hidden = false; }
-    form.addEventListener('submit', function (e) {
-      e.preventDefault();
+    function mensajeWa(promo) {
+      var de = (($('de') || {}).value || '').trim(), n = postalActual();
+      return '¡Hola! Ya compartí mi postal de El Taquito en mi historia y los etiqueté en @' + CUENTA + ' 🎉\n' +
+        'Elegí mi cupón: *' + promo + '*.\n' +
+        'Te adjunto la captura de mi historia.' +
+        (n ? '\nPostal N.º ' + n : '') + (de ? '\nMi nombre: ' + de : '');
+    }
+    bWa.addEventListener('click', function (e) {
       var sel = app.querySelector('input[name=tqPromo]:checked');
-      var usuario = $('prUser').value.trim();
-      if (!sel) return decir('Elige tu premio: 2×1 en bebidas o 10% en tu consumo.');
-      if (usuario.replace('@', '').length < 2) { $('prUser').focus(); return decir('Escribe tu usuario tal como aparece en tu perfil.'); }
-      var btn = form.querySelector('button'); btn.disabled = true; btn.textContent = 'Enviando…';
-      fetch(API + 'solicitud.php', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ red: $('prRed').value, usuario: usuario, promo: sel.value, postal: postalActual(), origen: TQ.origen || REF })
-      }).then(function (r) { return r.json(); }).then(function (d) {
-        if (d.ok) {
-          decir('¡Listo! ' + d.mensaje, true);
-          form.hidden = true;
-          if (typeof W.fxRafaga === 'function') W.fxRafaga(msg);
-        } else decir(d.error || 'No pudimos registrar tu solicitud. Intenta de nuevo.');
-      }).catch(function () { decir('No hay conexión. Intenta de nuevo en un momento.'); })
-        .then(function () { btn.disabled = false; btn.textContent = 'Ya compartí · Quiero mi ticket'; });
+      if (!sel) {
+        e.preventDefault();
+        decir('Primero elige tu cupón: 2×1 en bebidas o 10% en tu consumo.');
+        app.querySelector('.pr-opc').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+      var nombre = sel.value === '2x1' ? '2×1 en bebidas' : '10% de descuento en mi consumo';
+      bWa.href = 'https://wa.me/' + WA_NUM + '?text=' + encodeURIComponent(mensajeWa(nombre));
+      decir('¡Listo! No olvides adjuntar la captura de tu historia en el chat.', true);
+      if (typeof W.fxRafaga === 'function') W.fxRafaga(bWa);
     });
 
     /* ---------- 2. Imagen vertical para la historia ---------- */
