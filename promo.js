@@ -28,7 +28,9 @@
       '</div>' +
       '<ol class="pr-pasos">' +
       '<li><i>1</i><div><b>Comparte tu postal personalizada en tu historia</b> de Instagram, Facebook o TikTok y <b>etiquétanos @' + CUENTA + '</b>.<br>' +
-      '<button type="button" class="pr-story" id="prStory">Compartir mi postal en redes</button></div></li>' +
+      '<button type="button" class="pr-story" id="prStory">Compartir mi postal en redes</button>' +
+      '<a class="pr-img" id="prImg" download="mi-postal-el-taquito.jpg" hidden><img alt="Tu postal lista para tu historia"><span>¿No funcionó el botón? <b>Toca la imagen para guardarla</b> o mantenla presionada y elige «Guardar».</span></a>' +
+      '</div></li>' +
       '<li><i>2</i><div><b>Toma una captura</b> de tu historia ya publicada.</div></li>' +
       '<li><i>3</i><div><b>Mándanos la captura por WhatsApp</b> con el cupón que elegiste. Te confirmamos tu cupón por ahí; muéstralo a tu mesero de lunes a viernes.</div></li>' +
       '</ol>' +
@@ -92,7 +94,7 @@
         cargar(src), cargar(BASE + 'img/logo-crema.png').catch(function () { return null; }),
         D.fonts ? Promise.all([D.fonts.load('700 80px Oswald'), D.fonts.load('italic 40px Lora'), D.fonts.load('700 30px Montserrat')]).catch(function () { }) : null
       ]).then(function (r) { return dibujarHistoria(r[0], r[1]); });
-      historiaLista.catch(function () { historiaLista = null; });
+      historiaLista.then(mostrarImagen, function () { historiaLista = null; });
       return historiaLista;
     }
     function dibujarHistoria(foto, logo) {
@@ -123,6 +125,13 @@
       x.font = '700 34px Montserrat'; x.fillStyle = '#E7A33E'; x.fillText('#IntercambioConSabor', Wd / 2, y + 248);
       return new Promise(function (ok) { c.toBlob(function (b) { ok(new File([b], 'mi-postal-el-taquito.jpg', { type: 'image/jpeg' })); }, 'image/jpeg', .9); });
     }
+    /* La misma imagen, a la vista: si el botón no funciona, se guarda tocándola */
+    var prImg = $('prImg'), urlImg = '';
+    function mostrarImagen(f) {
+      if (urlImg) URL.revokeObjectURL(urlImg);
+      urlImg = URL.createObjectURL(f);
+      prImg.href = urlImg; prImg.querySelector('img').src = urlImg; prImg.hidden = false;
+    }
     function bajar(f) {
       var u = URL.createObjectURL(f), a = D.createElement('a');
       a.href = u; a.download = f.name; D.body.appendChild(a); a.click(); a.remove();
@@ -131,7 +140,8 @@
     var bStory = $('prStory');
     /* Se prepara antes de tocar para que el botón comparta al instante (iPhone lo exige) */
     W.tqPrepararHistoria = prepararHistoria;
-    var pv = $('preview'); if (pv) new MutationObserver(function () { historiaLista = null; }).observe(pv, { childList: true });
+    var pv = $('preview'); if (pv) new MutationObserver(function () { historiaLista = null; prImg.hidden = true; }).observe(pv, { childList: true });
+    if (TQ.historia) prepararHistoria();
     bStory.addEventListener('click', function () {
       var listo = historiaLista;
       if (!listo) { bStory.textContent = 'Preparando tu imagen…'; prepararHistoria(); }
