@@ -13,6 +13,17 @@
   var app = D.getElementById('promoApp');
   var REF = (function () { try { var r = new URLSearchParams(location.search).get('origen') || ''; return /^[A-Z0-9]{6}$/.test(r) ? r : ''; } catch (e) { return ''; } })();
   function $(id) { return D.getElementById(id); }
+  /* En iPhone, «descargar» manda la imagen a Archivos; para que llegue a Fotos hay que pasar por la hoja de compartir («Guardar imagen») */
+  var IOS = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  function guardarImagen(f, alFallar) {
+    if (IOS && navigator.canShare && navigator.canShare({ files: [f] })) {
+      return navigator.share({ files: [f] }).catch(function (e) { if (e && e.name === 'NotAllowedError' && alFallar) alFallar(); });
+    }
+    var u = URL.createObjectURL(f), a = D.createElement('a');
+    a.href = u; a.download = f.name; D.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(u); }, 4000);
+  }
+  W.tqGuardarImagen = guardarImagen; W.tqIOS = IOS;
   function postalActual() { return TQ.postal || (typeof cur !== 'undefined' ? cur : ''); }
   function aviso(t) { if (typeof toast === 'function') toast(t); else alert(t); }
 
@@ -29,7 +40,9 @@
       '<ol class="pr-pasos">' +
       '<li><i>1</i><div><b>Comparte tu postal personalizada en tu historia</b> de Instagram, Facebook o TikTok y <b>etiquétanos @' + CUENTA + '</b>.<br>' +
       '<button type="button" class="pr-story" id="prStory">Compartir mi postal en redes</button>' +
-      '<a class="pr-img" id="prImg" download="mi-postal-el-taquito.jpg" hidden><img alt="Tu postal lista para tu historia"><span>¿No funcionó el botón? <b>Toca la imagen para guardarla</b> o mantenla presionada y elige «Guardar».</span></a>' +
+      '<div class="pr-img" id="prImg" role="button" tabindex="0" hidden><img alt="Tu postal lista para tu historia"><span>¿No funcionó el botón? ' +
+      (IOS ? '<b>Toca la imagen y elige «Guardar imagen»</b> para tenerla en tus fotos. También puedes mantenerla presionada y elegir «Añadir a Fotos».'
+           : '<b>Toca la imagen para guardarla</b> en tu galería, o mantenla presionada y elige «Descargar imagen».') + '</span></div>' +
       '</div></li>' +
       '<li><i>2</i><div><b>Toma una captura</b> de tu historia ya publicada.</div></li>' +
       '<li><i>3</i><div><b>Mándanos la captura por WhatsApp</b> con el cupón que elegiste. Te confirmamos tu cupón por ahí; muéstralo a tu mesero de lunes a viernes.</div></li>' +
@@ -126,12 +139,15 @@
       return new Promise(function (ok) { c.toBlob(function (b) { ok(new File([b], 'mi-postal-el-taquito.jpg', { type: 'image/jpeg' })); }, 'image/jpeg', .9); });
     }
     /* La misma imagen, a la vista: si el botón no funciona, se guarda tocándola */
-    var prImg = $('prImg'), urlImg = '';
+    var prImg = $('prImg'), urlImg = '', archivoImg = null;
     function mostrarImagen(f) {
       if (urlImg) URL.revokeObjectURL(urlImg);
-      urlImg = URL.createObjectURL(f);
-      prImg.href = urlImg; prImg.querySelector('img').src = urlImg; prImg.hidden = false;
+      urlImg = URL.createObjectURL(f); archivoImg = f;
+      prImg.querySelector('img').src = urlImg; prImg.hidden = false;
     }
+    function tocarImagen() { if (archivoImg) guardarImagen(archivoImg); }
+    prImg.addEventListener('click', tocarImagen);
+    prImg.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tocarImagen(); } });
     function bajar(f) {
       var u = URL.createObjectURL(f), a = D.createElement('a');
       a.href = u; a.download = f.name; D.body.appendChild(a); a.click(); a.remove();
@@ -148,7 +164,9 @@
       (listo || historiaLista).then(function (f) {
         bStory.textContent = 'Compartir mi postal en redes';
         if (navigator.canShare && navigator.canShare({ files: [f] })) {
-          navigator.share({ files: [f] }).catch(function (e) { if (e && e.name === 'NotAllowedError') bajar(f); });
+          navigator.share({ files: [f] }).catch(function (e) {
+            if (e && e.name === 'NotAllowedError') { if (IOS) { prImg.scrollIntoView({ behavior: 'smooth', block: 'center' }); aviso('Toca la imagen para guardarla en tus fotos'); } else bajar(f); }
+          });
         } else bajar(f);
         if (navigator.clipboard) navigator.clipboard.writeText('@' + CUENTA + ' #IntercambioConSabor').catch(function () { });
         aviso('Copiamos @' + CUENTA + ' para que nos etiquetes');

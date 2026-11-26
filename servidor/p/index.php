@@ -52,9 +52,10 @@ cabeza($titulo, $og);
     <?php if ($de): ?><p class="de">Con cariño, <?= h($de) ?></p><?php endif; ?>
     <div class="marco"><img src="<?= h($img) ?>" alt="Tu postal de El Taquito" width="1500" height="1000"></div>
     <div class="acciones">
-      <a class="btn btn-rojo" href="/api/img.php?c=<?= $c ?>&amp;dl=1" download="postal-el-taquito-<?= $c ?>.jpg">Descargar mi postal</a>
+      <a class="btn btn-rojo" id="guardarPostal" href="/api/img.php?c=<?= $c ?>&amp;dl=1" download="postal-el-taquito-<?= $c ?>.jpg">Guardar mi postal</a>
       <button class="btn btn-borde" type="button" id="compartirPostal" hidden>Compartir</button>
     </div>
+    <p class="nota" id="notaGuardar" hidden></p>
     <p class="nota">Desde 1917, las mejores historias se comparten alrededor de una mesa.</p>
     <?php if ($p['postal']): ?>
     <div class="historia-link">
@@ -76,6 +77,26 @@ cabeza($titulo, $og);
 <script>
 window.TQ = {origen: <?= json_encode($c) ?>, postal: <?= json_encode((string)$p['postal']) ?>, historia: <?= json_encode("/api/img.php?c=$c") ?>};
 (function(){
+  /* Guardar en Fotos: en iPhone la descarga se va a Archivos, así que se usa la hoja de compartir («Guardar imagen»).
+     La imagen se baja al abrir la página para poder abrir la hoja en el mismo toque (iPhone lo exige). */
+  var IOS = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  var g = document.getElementById('guardarPostal'), nota = document.getElementById('notaGuardar'), archivo = null;
+  nota.textContent = IOS ? 'Toca «Guardar mi postal» y elige «Guardar imagen» para tenerla en tus fotos. También puedes mantener presionada la postal y elegir «Añadir a Fotos».'
+                         : 'También puedes mantener presionada la postal y elegir «Descargar imagen».';
+  nota.hidden = false;
+  if (IOS && window.fetch && window.File) {
+    fetch(TQ.historia).then(function(r){ return r.blob(); }).then(function(b){
+      var f = new File([b], 'postal-el-taquito-' + TQ.origen + '.jpg', {type: 'image/jpeg'});
+      if (navigator.canShare && navigator.canShare({files: [f]})) archivo = f;
+    }).catch(function(){});
+  }
+  g.addEventListener('click', function(e){
+    if (!archivo) return;               /* sin hoja de compartir: descarga normal */
+    e.preventDefault();
+    navigator.share({files: [archivo]}).catch(function(){});
+    fetch(g.href, {method: 'HEAD'}).catch(function(){});   /* cuenta la descarga */
+  });
+
   /* Compartir el ENLACE de la postal, no la imagen */
   var b = document.getElementById('compartirPostal');
   var texto = 'Mira la postal que me regalaron en El Taquito 💌';

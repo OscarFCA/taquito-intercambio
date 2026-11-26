@@ -22,7 +22,7 @@
 .pr-story{display:inline-flex;align-items:center;gap:8px;margin-top:10px;background:transparent;border:2px solid var(--crema);color:var(--crema);
  font:700 13.5px Montserrat;letter-spacing:.04em;padding:10px 16px;border-radius:999px;cursor:pointer}
 .pr-story:hover{background:var(--crema);color:var(--carbon)}
-.pr-img{display:flex;gap:14px;align-items:center;margin-top:14px;text-decoration:none;color:var(--crema);max-width:420px}
+.pr-img{cursor:pointer;display:flex;gap:14px;align-items:center;margin-top:14px;text-decoration:none;color:var(--crema);max-width:420px}
 .pr-img[hidden]{display:none}
 .pr-img img{flex:none;width:96px;height:auto;border-radius:8px;border:3px solid var(--crema);box-shadow:0 8px 18px rgba(0,0,0,.4);-webkit-touch-callout:default}
 .pr-img span{font-size:13.5px;line-height:1.45}
